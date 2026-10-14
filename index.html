@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>АНПЗ Сервис</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#2F80ED;--blue-btn:#1E6FD9;--orange:#FF9F1C;--green:#27AE60;--yellow:#F2C94C;--red:#EB5757;--red-btn:#D64545;
+  --bg:#FFF8EE;--card:#FFFFFF;--soft:#FBEFDC;--ink:#1E2A44;--muted:#5B6782;--line:#1E2A44;--shadow:#1E2A44;--row:#F1E7D6;--chip:#E8F1FD;
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#121A2C;--card:#1C2740;--soft:#243252;--ink:#F4EFE6;--muted:#A8B3CB;--line:#5E70A0;--shadow:#060A14;--row:#2A3960;--chip:#22355E;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121A2C;--card:#1C2740;--soft:#243252;--ink:#F4EFE6;--muted:#A8B3CB;--line:#5E70A0;--shadow:#060A14;--row:#2A3960;--chip:#22355E;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45;min-height:100vh}
+h1,h2,h3,h4{font-weight:900;margin:0 0 .5em;line-height:1.2}
+h1{font-size:28px}h2{font-size:21px}h3{font-size:17px}
+a{color:var(--blue)}
+p{margin:0 0 .7em}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+
+/* sticker cards & buttons */
+.card{background:var(--card);border:2.5px solid var(--line);border-radius:20px;box-shadow:4px 4px 0 var(--shadow);padding:18px}
+.card.flat{box-shadow:none}
+.btn{font:inherit;font-weight:800;font-size:14px;border:2.5px solid var(--line);border-radius:16px;padding:8px 15px;background:var(--card);color:var(--ink);
+  box-shadow:3px 3px 0 var(--shadow);cursor:pointer;transition:transform .15s,box-shadow .15s;display:inline-flex;align-items:center;gap:6px;text-decoration:none;white-space:nowrap;line-height:1.3}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--shadow)}
+.btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--shadow);transition-duration:.08s}
+.btn.primary{background:var(--blue-btn);color:#fff}
+.btn.accent{background:var(--orange);color:#1E2A44}
+.btn.ok{background:var(--green);color:#1E2A44}
+.btn.danger{background:var(--red-btn);color:#fff}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:12px;box-shadow:2px 2px 0 var(--shadow)}
+.btn.ghost{box-shadow:none;border-color:transparent;background:transparent}
+.btn.ghost:hover{background:var(--soft)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.btn.big{font-size:17px;padding:12px 22px;border-radius:20px}
+
+input,select,textarea{font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px 10px;width:100%;min-width:0}
+textarea{resize:vertical}
+input[type=checkbox],input[type=radio]{width:auto;accent-color:var(--blue)}
+.fld{margin-bottom:14px}
+.fld label,.fld .lbl{display:block;font-weight:800;margin-bottom:5px}
+.fld .err{color:var(--red);font-weight:700;font-size:13px;min-height:0}
+.fld.bad input,.fld.bad select,.fld.bad textarea{border-color:var(--red)}
+.req{color:var(--red)}
+.hint{font-size:13px;color:var(--muted);margin-top:4px}
+.chk{display:flex!important;align-items:center;gap:8px;font-weight:700!important;cursor:pointer}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.end{justify-content:flex-end}
+.row.between{justify-content:space-between}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;align-items:start}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.stack>*+*{margin-top:16px}
+.sp{flex:1}
+
+/* header */
+.top{position:sticky;top:0;z-index:30;background:var(--bg);border-bottom:2.5px solid var(--line);display:flex;align-items:center;gap:14px;padding:8px 20px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);font-weight:900;font-size:19px;letter-spacing:-.3px}
+.logo b{color:var(--orange);margin-left:4px}
+.nav{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+.nav a{padding:6px 11px;border-radius:12px;font-weight:800;color:var(--ink);text-decoration:none;border:2px solid transparent;font-size:14px;display:inline-flex;gap:6px;align-items:center}
+.nav a:hover{background:var(--soft)}
+.nav a.on{background:var(--orange);border-color:var(--line);color:#1E2A44}
+.cnt{background:var(--red-btn);color:#fff;border-radius:999px;font-size:11px;font-weight:900;padding:0 6px;min-width:18px;text-align:center;line-height:18px}
+.tools{display:flex;gap:6px;align-items:center}
+.pop{position:relative}
+.drop{position:absolute;right:0;top:calc(100% + 8px);width:min(360px,92vw);z-index:40;padding:12px;max-height:70vh;overflow:auto}
+.ava{width:26px;height:26px;border-radius:50%;background:var(--blue-btn);color:#fff;display:inline-grid;place-items:center;font-size:11px;font-weight:900;border:2px solid var(--line)}
+.nitem{display:block;padding:9px 10px;border-radius:12px;text-decoration:none;color:var(--ink);border:2px solid transparent}
+.nitem:hover{background:var(--soft)}
+.nitem.unread{background:var(--chip);border-color:var(--line)}
+.chips{display:inline-flex;gap:4px;flex-wrap:wrap}
+.chip{display:inline-block;font-size:11px;font-weight:800;padding:1px 7px;border-radius:999px;background:var(--soft);border:1.5px solid var(--line);color:var(--ink)}
+.demo-bar{background:var(--orange);color:#1E2A44;text-align:center;font-weight:800;font-size:13px;padding:4px 10px}
+
+main{max-width:1200px;margin:0 auto;padding:24px 20px 70px}
+.crumbs{font-size:13px;margin-bottom:10px;color:var(--muted)}
+.crumbs a{color:var(--muted)}
+
+/* badges */
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:800;font-size:12px;border:2px solid var(--line);color:#1E2A44;white-space:nowrap}
+.sla{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:13px;white-space:nowrap}
+.sla i{width:11px;height:11px;border-radius:50%;border:2px solid var(--line);display:inline-block}
+.sla.g i{background:var(--green)}.sla.y i{background:var(--yellow)}.sla.r i{background:var(--red)}.sla.p i{background:#B9A6F0}.sla.n i{background:transparent}
+.sla.r{color:var(--red)}
+
+/* hero & tiles */
+.hero{display:flex;gap:22px;align-items:center;background:linear-gradient(135deg,var(--chip),var(--card))}
+.bubble{position:relative;background:var(--card);border:2.5px solid var(--line);border-radius:18px;padding:12px 16px;font-weight:700}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+.tile{display:block;text-decoration:none;color:var(--ink);transition:transform .2s cubic-bezier(.3,1.6,.5,1),box-shadow .2s}
+.tile:hover{transform:translateY(-5px) rotate(-1deg);box-shadow:6px 8px 0 var(--shadow)}
+.tile h3{margin:10px 0 4px}
+.tile .ico{width:62px;height:62px}
+.tlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.titem{display:flex;flex-direction:column;gap:6px;text-decoration:none;color:var(--ink);padding:14px;border:2px solid var(--line);border-radius:16px;background:var(--card);transition:transform .15s}
+.titem:hover{transform:translateY(-3px);background:var(--chip)}
+.titem b{font-size:15px}
+
+/* tables */
+.tw{overflow-x:auto;border:2px solid var(--line);border-radius:14px;background:var(--card)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);background:var(--soft);font-weight:900}
+.tbl th,.tbl td{padding:8px 10px;border-bottom:1.5px solid var(--row);text-align:left;vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:var(--chip)}
+.tbl a{font-weight:800;text-decoration:none}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;align-items:end}
+.filters>*{flex:1 1 150px;max-width:240px}
+.filters label{font-size:12px;font-weight:800;color:var(--muted);display:block;margin-bottom:3px}
+.seg{display:inline-flex;border:2.5px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:2px 2px 0 var(--shadow)}
+.seg button{font:inherit;font-weight:800;font-size:13px;border:0;background:var(--card);color:var(--ink);padding:6px 12px;cursor:pointer}
+.seg button.on{background:var(--orange);color:#1E2A44}
+
+/* kanban */
+.kan{display:grid;grid-template-columns:repeat(4,minmax(230px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:var(--soft);border:2px dashed var(--line);border-radius:16px;padding:10px;min-height:260px;transition:background .15s}
+.col.over{background:var(--chip);border-style:solid}
+.col h3{font-size:14px;display:flex;justify-content:space-between}
+.kcard{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px;box-shadow:2px 2px 0 var(--shadow);cursor:grab;font-size:13px}
+.kcard:active{cursor:grabbing}
+.kcard a{font-weight:900;text-decoration:none;color:var(--ink)}
+.kcard.over{border-color:var(--red);border-width:3px}
+
+/* request card */
+.dl{display:grid;grid-template-columns:minmax(120px,38%) 1fr;gap:6px 14px;font-size:14px}
+.dl dt{color:var(--muted);font-weight:700}
+.dl dd{margin:0;font-weight:700;word-break:break-word}
+.steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:6px 0 2px}
+.step{font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;border:2px solid var(--line);background:var(--card);opacity:.45}
+.step.done{opacity:1;background:var(--chip)}
+.step.cur{opacity:1;background:var(--orange);color:#1E2A44}
+.step.bad{opacity:1;background:#F9CACA;color:#1E2A44}
+.arrow{color:var(--muted);font-weight:900}
+.hist{list-style:none;padding:0;margin:0;font-size:13px}
+.hist li{position:relative;padding:0 0 12px 22px;border-left:2.5px solid var(--row);margin-left:6px}
+.hist li:last-child{border-left-color:transparent}
+.hist li::before{content:"";position:absolute;left:-8px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--orange);border:2px solid var(--line)}
+.chat{display:flex;flex-direction:column;gap:10px;max-height:420px;overflow:auto;padding:4px}
+.msg{max-width:85%;padding:9px 12px;border:2px solid var(--line);border-radius:16px 16px 16px 4px;background:var(--card);font-size:14px}
+.msg.mine{align-self:flex-end;background:var(--chip);border-radius:16px 16px 4px 16px}
+.msg.int{background:#FFF1CC;color:#1E2A44;border-style:dashed}
+.msg .who{font-size:12px;font-weight:900;margin-bottom:2px;display:flex;gap:6px;justify-content:space-between}
+.file{display:inline-flex;gap:6px;align-items:center;font-size:12px;font-weight:800;padding:3px 9px;border:1.5px solid var(--line);border-radius:10px;background:var(--soft);margin:3px 4px 0 0}
+.stars{display:inline-flex;gap:4px;flex-direction:row-reverse;justify-content:flex-end}
+.stars input{position:absolute;opacity:0;width:1px;height:1px}
+.stars label{font-size:32px;cursor:pointer;color:var(--row);transition:transform .15s;-webkit-text-stroke:1.5px var(--line);line-height:1}
+.stars label:hover,.stars label:hover~label,.stars input:checked~label{color:var(--orange)}
+.stars label:hover{transform:scale(1.2)}
+.stars input:focus-visible+label{outline:3px solid var(--blue)}
+.rate-show{color:var(--orange);font-size:18px;letter-spacing:2px}
+
+/* stats */
+.stat{padding:16px}
+.stat .v{font-size:32px;font-weight:900;line-height:1.1}
+.stat .l{color:var(--muted);font-weight:800;font-size:13px}
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:grid;grid-template-columns:minmax(110px,32%) 1fr 48px;gap:10px;align-items:center;font-size:13px;font-weight:700}
+.bar-track{height:20px;background:var(--soft);border-radius:8px;border:2px solid var(--line);overflow:hidden}
+.bar-fill{height:100%;background:var(--blue);border-right:2px solid var(--line)}
+.bar-fill.o{background:var(--orange)}.bar-fill.g{background:var(--green)}
+
+/* vacations */
+.vac td,.vac th{padding:0;text-align:center;font-size:11px;min-width:24px;height:30px;border-bottom:1.5px solid var(--row)}
+.vac th.name,.vac td.name{text-align:left;padding:0 10px;min-width:170px;font-size:13px;position:sticky;left:0;background:var(--card);z-index:1}
+.vac .we{background:var(--soft)}
+.vac .hol{background:#FFE3B3;color:#1E2A44}
+.vac .v1{background:var(--blue)}
+.vac .v2{background:repeating-linear-gradient(45deg,var(--blue) 0 4px,transparent 4px 8px)}
+.vac th.clash{background:var(--red);color:#fff}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;font-weight:700;margin-top:10px}
+.legend i{display:inline-block;width:16px;height:12px;border:1.5px solid var(--line);border-radius:3px;vertical-align:-2px;margin-right:4px}
+
+/* empty & mascot */
+.empty{text-align:center;padding:28px 10px}
+.empty p{font-weight:800;font-size:16px}
+.mascot{transform-origin:50% 95%;animation:sway 3.2s ease-in-out infinite;flex:none}
+.mascot.still{animation:none}
+.wave{transform-origin:100px 96px;animation:wave 1.2s ease-in-out infinite}
+@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-18deg)}}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+
+/* modal, toast, confetti */
+.modal-bg{position:fixed;inset:0;background:rgba(18,26,44,.55);display:grid;place-items:center;z-index:100;padding:16px}
+.modal{width:min(480px,100%);animation:pop .25s ease-out}
+#toasts{position:fixed;right:16px;bottom:16px;z-index:200;display:flex;flex-direction:column;gap:8px;max-width:calc(100vw - 32px)}
+.toast{background:var(--card);border:2.5px solid var(--line);border-radius:16px;box-shadow:3px 3px 0 var(--shadow);padding:10px 14px;font-weight:800;animation:pop .2s ease-out;font-size:14px}
+.toast.err{background:#F9CACA;color:#1E2A44}
+.toast.ok{background:#C9F0D8;color:#1E2A44}
+.confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:150;pointer-events:none;border:1.5px solid #1E2A44;border-radius:3px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+/* login */
+.login{max-width:880px;margin:5vh auto;padding:0 16px}
+.ulist{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.ubtn{text-align:left;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px;cursor:pointer;display:flex;gap:10px;align-items:center;transition:transform .15s}
+.ubtn:hover{transform:translateY(-3px);background:var(--chip)}
+.ubtn .ava{width:38px;height:38px;font-size:13px;flex:none}
+
+.news{border-left:5px solid var(--orange);padding:6px 0 6px 12px;margin-bottom:12px}
+.fbuild{display:grid;grid-template-columns:1.4fr 1fr 1.4fr auto auto;gap:8px;align-items:center;margin-bottom:8px}
+.sec-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.sec-title h1,.sec-title h2{margin:0}
+.hide-m{display:inline}
+
+@media (max-width:900px){
+  .grid2,.grid3{grid-template-columns:1fr}
+  .nav{order:3;width:100%;flex:none}
+  .top{padding:8px 16px;gap:8px}
+  .logo{flex:1}
+  main{padding:16px 16px 60px}
+  .hero{flex-direction:column;text-align:center}
+  h1{font-size:23px}
+  .fbuild{grid-template-columns:1fr 1fr}
+  .hide-m{display:none}
+  .dl{grid-template-columns:1fr}
+  .dl dt{margin-top:6px}
+}
+@media (max-width:480px){
+  .row2{grid-template-columns:1fr}
+  .filters>*{max-width:none}
+  .tiles{grid-template-columns:1fr 1fr;gap:10px}
+  .tile{padding:12px}
+  .tile .ico{width:46px;height:46px}
+  .tile p{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toasts" aria-live="polite"></div>
+<script>
+'use strict';
+/* =====================================================================
+   АНПЗ Сервис — интерактивный прототип по PRD_4.md
+   Все данные хранятся в localStorage браузера. Слой A.* моделирует
+   серверное API: каждое действие проверяет права (RBAC) и пишет аудит.
+   ===================================================================== */
+const LS = 'anpz-servis-demo-v1', H = 36e5, D = 864e5, Q = 9e5;
+const FORBID = new Error('403');
+const SESSION_TTL = 8 * H;
+const app = document.getElementById('app');
+let db, post = [], ui = { open: null, my: {}, q: {}, aud: {}, vm: 0, b: null, an: 'all' };
+
+/* ---------- storage ---------- */
+function load() { try { const s = localStorage.getItem(LS); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+function save() { try { localStorage.setItem(LS, JSON.stringify(db)); } catch (e) { } }
+
+/* ---------- utils ---------- */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const z2 = n => String(n).padStart(2, '0');
+const iso = d => d.getFullYear() + '-' + z2(d.getMonth() + 1) + '-' + z2(d.getDate());
+const fdt = ts => ts ? new Date(ts).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+const fDate = s => s ? new Date(s + 'T00:00').toLocaleDateString('ru-RU') : '—';
+const ago = ts => { const m = Math.round((Date.now() - ts) / 6e4); if (m < 1) return t('justnow'); if (m < 60) return m + ' ' + t('minago'); const h = Math.round(m / 60); if (h < 24) return h + ' ' + t('hago'); return Math.round(h / 24) + ' ' + t('dago'); };
+const need = c => { if (!c) throw FORBID; };
+const has = (u, r) => !!u && u.roles.includes(r);
+const user = id => db.users.find(x => x.id === id) || { id, fio: id === 'system' ? 'Система' : '—', roles: [] };
+const me = () => db.session.uid ? db.users.find(x => x.id === db.session.uid && x.active) : null;
+const req = id => db.reqs.find(x => x.id === id);
+const typeById = id => db.types.find(x => x.id === id);
+const catById = id => db.cats.find(x => x.id === id);
+const typeOf = r => typeById(r.type);
+const deptOf = r => typeOf(r)?.cat;
+const initials = f => f.split(' ').slice(0, 2).map(s => s[0]).join('');
+const shortName = f => { const p = f.split(' '); return p.length > 1 ? p[0] + ' ' + p[1][0] + '.' : f; };
+const uniq = a => [...new Set(a.filter(Boolean))];
+const fmtSize = b => b > 1048576 ? (b / 1048576).toFixed(1) + ' МБ' : Math.max(1, Math.round(b / 1024)) + ' КБ';
+const numFmt = n => 'АНПЗ-' + new Date().getFullYear() + '-' + String(n).padStart(6, '0');
+const catName = c => c ? (db.ui.lang === 'kz' && c.kz ? c.kz : c.ru) : '—';
+
+/* ---------- i18n (RU / KZ) ---------- */
+const I18N = {
+  ru: {
+    home: 'Главная', catalog: 'Каталог услуг', my: 'Мои заявки', approvals: 'На согласовании', vacations: 'График отпусков',
+    queue: 'Очередь заявок', dash: 'Мой дашборд', users: 'Пользователи', builder: 'Конструктор', dicts: 'Справочники',
+    analytics: 'Аналитика', audit: 'Аудит', settings: 'Настройки', profile: 'Профиль', create: 'Создать заявку', logout: 'Выйти',
+    hello: 'Привет', helpq: 'Чем помочь сегодня?', active: 'Мои активные заявки', news: 'Новости и объявления', search: 'Поиск',
+    st_draft: 'Черновик', st_new: 'Новая', st_approval: 'На согласовании', st_rejected: 'Отклонена', st_work: 'В работе',
+    st_waiting: 'Ожидает ответа автора', st_done: 'Выполнена', st_closed: 'Закрыта', st_cancelled: 'Отменена',
+    p_low: 'низкий', p_normal: 'обычный', p_high: 'высокий', p_crit: 'критический',
+    send: 'Отправить заявку', draft: 'Сохранить черновик', cancel: 'Отменить заявку', approve: 'Согласовать', reject: 'Отклонить',
+    take: 'Взять в работу', empty: 'Заявок пока нет — отдыхаем!', lost: 'Капелька заблудилась на установке',
+    login: 'Вход через Active Directory', notifs: 'Уведомления', readall: 'Прочитать все', nonotif: 'Новых уведомлений нет',
+    all: 'Все', status: 'Статус', category: 'Категория', priority: 'Приоритет', period: 'Период', number: 'Номер',
+    subject: 'Тема', author: 'Автор', assignee: 'Исполнитель', created: 'Создана', open: 'Открыть',
+    justnow: 'только что', minago: 'мин назад', hago: 'ч назад', dago: 'дн назад', forbidden: 'Сюда вход только по допуску',
+  },
+  kz: {
+    home: 'Басты бет', catalog: 'Қызметтер каталогы', my: 'Менің өтінімдерім', approvals: 'Келісуде', vacations: 'Демалыс кестесі',
+    queue: 'Өтінімдер кезегі', dash: 'Менің дашбордым', users: 'Пайдаланушылар', builder: 'Конструктор', dicts: 'Анықтамалықтар',
+    analytics: 'Талдау', audit: 'Аудит', settings: 'Баптаулар', profile: 'Профиль', create: 'Өтінім құру', logout: 'Шығу',
+    hello: 'Сәлем', helpq: 'Бүгін немен көмектесейін?', active: 'Менің белсенді өтінімдерім', news: 'Жаңалықтар мен хабарландырулар', search: 'Іздеу',
+    st_draft: 'Жоба', st_new: 'Жаңа', st_approval: 'Келісуде', st_rejected: 'Қабылданбады', st_work: 'Жұмыста',
+    st_waiting: 'Автордың жауабын күтуде', st_done: 'Орындалды', st_closed: 'Жабылды', st_cancelled: 'Бас тартылды',
+    p_low: 'төмен', p_normal: 'қалыпты', p_high: 'жоғары', p_crit: 'сыни',
+    send: 'Өтінімді жіберу', draft: 'Жобаны сақтау', cancel: 'Өтінімнен бас тарту', approve: 'Келісу', reject: 'Қабылдамау',
+    take: 'Жұмысқа алу', empty: 'Әзірге өтінімдер жоқ — демаламыз!', lost: 'Тамшы қондырғыда адасып қалды',
+    login: 'Active Directory арқылы кіру', notifs: 'Хабарландырулар', readall: 'Барлығын оқу', nonotif: 'Жаңа хабарландырулар жоқ',
+    all: 'Барлығы', status: 'Мәртебе', category: 'Санат', priority: 'Басымдық', period: 'Кезең', number: 'Нөмір',
+    subject: 'Тақырып', author: 'Автор', assignee: 'Орындаушы', created: 'Құрылды', open: 'Ашу',
+    justnow: 'жаңа ғана', minago: 'мин бұрын', hago: 'сағ бұрын', dago: 'күн бұрын', forbidden: 'Мұнда тек рұқсатпен кіруге болады',
+  }
+};
+const t = k => (I18N[db?.ui?.lang] || I18N.ru)[k] ?? I18N.ru[k] ?? k;
+
+const ST = { draft: '#F1EADF', new: '#CFE3FB', approval: '#FDE7B8', rejected: '#F9CACA', work: '#FFD9A8', waiting: '#E6DAFB', done: '#C9F0D8', closed: '#E2E6EE', cancelled: '#E2E6EE' };
+const PR = { low: '#E2E6EE', normal: '#CFE3FB', high: '#FFD9A8', crit: '#F9CACA' };
+const badge = s => `<span class="badge" style="background:${ST[s]}">${t('st_' + s)}</span>`;
+const prBadge = p => `<span class="badge" style="background:${PR[p]}">${t('p_' + p)}</span>`;
+const ACTIVE = ['new', 'approval', 'work', 'waiting'];
+
+/* ---------- working calendar & SLA ---------- */
+function isHoliday(d) { const s = iso(d); return db.holidays.some(h => h.d === s); }
+function isWorkTime(d) { const w = d.getDay(), h = d.getHours(); return w > 0 && w < 6 && h >= 9 && h < 18 && h !== 13 && !isHoliday(d); }
+function addWork(ts, hours) { let x = Math.ceil(ts / Q) * Q, q = Math.round(hours * 4), g = 0; while (q > 0 && g++ < 40000) { if (isWorkTime(new Date(x))) q--; x += Q; } return x; }
+function workHoursBetween(a, b) { let c = 0; for (let x = a; x < b && c < 4000; x += Q) if (isWorkTime(new Date(x))) c++; return c / 4; }
+function vacDays(a, b) { if (!a || !b || a > b) return 0; let n = 0, g = 0; for (let d = new Date(a + 'T00:00'); iso(d) <= b && g++ < 400; d.setDate(d.getDate() + 1)) if (!isHoliday(d)) n++; return n; }
+function holidaysIn(a, b) { return db.holidays.filter(h => h.d >= a && h.d <= b); }
+const slaText = h => h < 1 ? Math.max(1, Math.round(h * 60)) + ' мин' : h < 48 ? Math.round(h) + ' ч' : Math.round(h / 24) + ' дн';
+function sla(r) {
+  if (['draft', 'cancelled', 'rejected'].includes(r.status)) return { cls: 'n', txt: '—' };
+  if (['done', 'closed'].includes(r.status)) { const ok = (r.doneAt || r.closedAt) <= r.deadline; return { cls: ok ? 'g' : 'r', txt: ok ? 'в срок' : 'с просрочкой', ok }; }
+  if (r.status === 'waiting') return { cls: 'p', txt: 'пауза' };
+  const now = Date.now(), pct = (now - r.created) / Math.max(1, r.deadline - r.created), left = r.deadline - now;
+  return { cls: pct >= 1 ? 'r' : pct >= .8 ? 'y' : 'g', pct, over: pct >= 1, txt: pct >= 1 ? 'просрочено на ' + slaText(-left / H) : 'осталось ' + slaText(left / H) };
+}
+const slaTag = r => { const s = sla(r); return `<span class="sla ${s.cls}"><i></i>${s.txt}</span>`; };
+const slaHuman = h => h % 8 === 0 ? (h / 8) + ' раб. ' + (h / 8 === 1 ? 'день' : h / 8 < 5 ? 'дня' : 'дней') : h + ' ч';
+
+/* ---------- seed data ---------- */
+function seed() {
+  const now = Date.now();
+  db = {
+    ver: 1, seq: 118, session: { uid: null, last: 0 }, ui: { lang: 'ru', theme: 'auto', qview: 'table' },
+    users: [
+      { id: 'u1', login: 'a.nurlanova', fio: 'Айгерим Нурланова', pos: 'Оператор технологической установки', dept: 'Цех №1 (ЭЛОУ-АВТ)', email: 'a.nurlanova@anpz.kz', phone: '+7 7122 25-14-01', tab: '010245', manager: 'u2', roles: ['employee'], mdept: null, active: true, ch: { portal: true, email: true, tg: false } },
+      { id: 'u8', login: 'n.bekov', fio: 'Нурлан Беков', pos: 'Машинист насосных установок', dept: 'Цех №1 (ЭЛОУ-АВТ)', email: 'n.bekov@anpz.kz', phone: '+7 7122 25-14-07', tab: '010311', manager: 'u2', roles: ['employee'], mdept: null, active: true, ch: { portal: true, email: true, tg: true } },
+      { id: 'u2', login: 'e.saparov', fio: 'Ерлан Сапаров', pos: 'Начальник цеха №1', dept: 'Цех №1 (ЭЛОУ-АВТ)', email: 'e.saparov@anpz.kz', phone: '+7 7122 25-14-00', tab: '008112', manager: null, roles: ['employee', 'head'], mdept: null, active: true, ch: { portal: true, email: true, tg: true } },
+      { id: 'u3', login: 'd.akhmetova', fio: 'Дана Ахметова', pos: 'Специалист по кадрам', dept: 'Отдел кадров', email: 'd.akhmetova@anpz.kz', phone: '+7 7122 25-20-14', tab: '009431', manager: null, roles: ['employee', 'manager'], mdept: 'HR', active: true, ch: { portal: true, email: true, tg: false } },
+      { id: 'u4', login: 't.zhumabaev', fio: 'Тимур Жумабаев', pos: 'Инженер-программист', dept: 'Отдел ИТ', email: 't.zhumabaev@anpz.kz', phone: '+7 7122 25-30-02', tab: '009877', manager: null, roles: ['employee', 'manager'], mdept: 'IT', active: true, ch: { portal: true, email: true, tg: false } },
+      { id: 'u9', login: 'g.serikov', fio: 'Ғалым Серіков', pos: 'Инженер технической поддержки', dept: 'Отдел ИТ', email: 'g.serikov@anpz.kz', phone: '+7 7122 25-30-05', tab: '010002', manager: null, roles: ['employee', 'manager'], mdept: 'IT', active: true, ch: { portal: true, email: true, tg: false } },
+      { id: 'u5', login: 'a.kassymova', fio: 'Асель Касымова', pos: 'Специалист АХО', dept: 'АХО', email: 'a.kassymova@anpz.kz', phone: '+7 7122 25-11-20', tab: '009215', manager: null, roles: ['employee', 'manager'], mdept: 'AHO', active: true, ch: { portal: true, email: true, tg: false } },
+      { id: 'u6', login: 'm.ospanov', fio: 'Марат Оспанов', pos: 'Инженер по охране труда', dept: 'Служба ОТ', email: 'm.ospanov@anpz.kz', phone: '+7 7122 25-40-01', tab: '008764', manager: null, roles: ['employee', 'manager'], mdept: 'OT', active: true, ch: { portal: true, email: true, tg: false } },
+      { id: 'u7', login: 'portal.admin', fio: 'Администратор портала', pos: 'Системный администратор', dept: 'Отдел ИТ', email: 'portal.admin@anpz.kz', phone: '+7 7122 25-30-00', tab: '000001', manager: null, roles: ['employee', 'admin'], mdept: null, active: true, ch: { portal: true, email: true, tg: false } },
+    ],
+    cats: [
+      { id: 'HR', ru: 'Кадры', kz: 'Кадрлар', icon: 'suit', desc: 'Отпуска, справки, командировки' },
+      { id: 'IT', ru: 'ИТ', kz: 'IT', icon: 'pc', desc: 'Техника, доступы, программы' },
+      { id: 'AHO', ru: 'АХО', kz: 'ӘШБ', icon: 'wrench', desc: 'Канцелярия, ремонт, пропуска, транспорт' },
+      { id: 'OT', ru: 'Охрана труда', kz: 'Еңбекті қорғау', icon: 'helmet', desc: 'СИЗ, спецодежда, инструктажи' },
+    ],
+    types: [
+      { id: 'hr_vac', cat: 'HR', name: 'Ежегодный отпуск', approval: true, sla: 24, active: true, fields: [{ k: 'period', l: 'Даты отпуска', t: 'period', req: 1 }, { k: 'sub', l: 'Замещающий сотрудник', t: 'text', ph: 'ФИО' }] },
+      { id: 'hr_unpaid', cat: 'HR', name: 'Отпуск без сохранения з/п', approval: true, sla: 24, active: true, fields: [{ k: 'period', l: 'Даты', t: 'period', req: 1 }, { k: 'reason', l: 'Причина', t: 'textarea', req: 1 }] },
+      { id: 'hr_move', cat: 'HR', name: 'Перенос отпуска', approval: true, sla: 24, active: true, fields: [{ k: 'old', l: 'Исходные даты', t: 'period', req: 1 }, { k: 'period', l: 'Новые даты', t: 'period', req: 1 }, { k: 'reason', l: 'Причина', t: 'textarea', req: 1 }] },
+      { id: 'hr_cert', cat: 'HR', name: 'Справка с места работы', approval: false, sla: 16, active: true, fields: [{ k: 'kind', l: 'Тип справки', t: 'select', opt: ['С места работы', 'О доходах', 'О стаже', 'Для визы'], req: 1 }, { k: 'copies', l: 'Количество экземпляров', t: 'number', req: 1, def: 1 }, { k: 'where', l: 'Куда предоставляется', t: 'text', req: 1 }] },
+      { id: 'hr_trip', cat: 'HR', name: 'Командировка', approval: true, sla: 24, active: true, fields: [{ k: 'city', l: 'Город', t: 'text', req: 1 }, { k: 'period', l: 'Даты', t: 'period', req: 1 }, { k: 'goal', l: 'Цель', t: 'textarea', req: 1 }, { k: 'transport', l: 'Транспорт', t: 'select', opt: ['Авиа', 'ЖД', 'Служебный автомобиль'], req: 1 }, { k: 'hotel', l: 'Нужно проживание', t: 'checkbox' }] },
+      { id: 'it_pc', cat: 'IT', name: 'Неисправность ПК / принтера', approval: false, sla: 8, active: true, descReq: true, fields: [{ k: 'inv', l: 'Инвентарный номер', t: 'text', req: 1, ph: 'ИНВ-000000' }, { k: 'room', l: 'Кабинет', t: 'text', req: 1 }, { k: 'photo', l: 'Фото', t: 'file' }] },
+      { id: 'it_access', cat: 'IT', name: 'Доступ к системе / папке', approval: true, sla: 8, active: true, fields: [{ k: 'system', l: 'Система', t: 'dict', dict: 'systems', req: 1 }, { k: 'access', l: 'Тип доступа', t: 'select', opt: ['Чтение', 'Чтение и запись', 'Администратор'], req: 1 }, { k: 'reason', l: 'Обоснование', t: 'textarea', req: 1 }] },
+      { id: 'it_soft', cat: 'IT', name: 'Установка ПО', approval: true, sla: 16, active: true, fields: [{ k: 'soft', l: 'Название ПО', t: 'text', req: 1 }, { k: 'reason', l: 'Обоснование', t: 'textarea', req: 1 }] },
+      { id: 'it_acc', cat: 'IT', name: 'Учётная запись / почта новому сотруднику', approval: true, sla: 8, active: true, fields: [{ k: 'fio', l: 'ФИО сотрудника', t: 'text', req: 1 }, { k: 'pos', l: 'Должность', t: 'text', req: 1 }, { k: 'dept', l: 'Подразделение', t: 'dict', dict: 'departments', req: 1 }, { k: 'start', l: 'Дата выхода', t: 'date', req: 1 }] },
+      { id: 'it_other', cat: 'IT', name: 'Другое', approval: false, sla: 8, active: true, descReq: true, fields: [] },
+      { id: 'aho_stat', cat: 'AHO', name: 'Канцелярия', approval: false, sla: 24, active: true, fields: [{ k: 'item', l: 'Позиция', t: 'dict', dict: 'stationery', req: 1 }, { k: 'qty', l: 'Количество', t: 'number', req: 1, def: 1 }] },
+      { id: 'aho_furn', cat: 'AHO', name: 'Мебель / оргтехника', approval: false, sla: 40, active: true, fields: [{ k: 'what', l: 'Что требуется', t: 'text', req: 1 }, { k: 'room', l: 'Кабинет', t: 'text', req: 1 }, { k: 'reason', l: 'Обоснование', t: 'textarea', req: 1 }] },
+      { id: 'aho_fix', cat: 'AHO', name: 'Мелкий ремонт (сантехника, электрика, двери)', approval: false, sla: 8, active: true, descReq: true, fields: [{ k: 'bld', l: 'Здание', t: 'dict', dict: 'buildings', req: 1 }, { k: 'room', l: 'Кабинет', t: 'text', req: 1 }, { k: 'photo', l: 'Фото', t: 'file' }] },
+      { id: 'aho_pass', cat: 'AHO', name: 'Пропуск (постоянный / гостевой / автотранспорт)', approval: false, sla: 8, active: true, fields: [{ k: 'kind', l: 'Вид пропуска', t: 'select', opt: ['Постоянный', 'Гостевой', 'Автотранспорт'], req: 1 }, { k: 'guest', l: 'ФИО гостя', t: 'text' }, { k: 'date', l: 'Дата', t: 'date', req: 1 }, { k: 'time', l: 'Время', t: 'time' }, { k: 'plate', l: 'Госномер', t: 'text', ph: '123 ABC 06' }] },
+      { id: 'aho_car', cat: 'AHO', name: 'Служебный транспорт', approval: false, sla: 8, active: true, fields: [{ k: 'date', l: 'Дата', t: 'date', req: 1 }, { k: 'time', l: 'Время', t: 'time', req: 1 }, { k: 'route', l: 'Маршрут', t: 'text', req: 1 }, { k: 'pax', l: 'Количество пассажиров', t: 'number', req: 1, def: 1 }] },
+      { id: 'ot_siz', cat: 'OT', name: 'Выдача / замена спецодежды и СИЗ', approval: false, sla: 40, active: true, fields: [{ k: 'item', l: 'Наименование', t: 'dict', dict: 'siz', req: 1 }, { k: 'size', l: 'Размер', t: 'text', req: 1 }, { k: 'reason', l: 'Причина замены', t: 'select', opt: ['Износ', 'Новый сотрудник', 'Не подходит размер', 'Повреждение'], req: 1 }] },
+      { id: 'ot_train', cat: 'OT', name: 'Запись на инструктаж / обучение', approval: false, sla: 24, active: true, fields: [{ k: 'kind', l: 'Тип', t: 'select', opt: ['Первичный инструктаж', 'Повторный инструктаж', 'Пожарная безопасность', 'Работа на высоте', 'Первая помощь'], req: 1 }, { k: 'date', l: 'Желаемая дата', t: 'date', req: 1 }] },
+    ],
+    dicts: {
+      departments: ['Цех №1 (ЭЛОУ-АВТ)', 'Цех №2', 'Отдел кадров', 'Отдел ИТ', 'АХО', 'Служба ОТ', 'Бухгалтерия', 'Центральная лаборатория'],
+      buildings: ['Административный корпус', 'Здание ИТЦ', 'Цех №1 (ЭЛОУ-АВТ)', 'Цех №2', 'Центральная лаборатория', 'Столовая'],
+      stationery: ['Бумага А4 (пачка)', 'Ручка шариковая синяя', 'Блокнот А5', 'Папка-регистратор', 'Степлер', 'Скобы №24', 'Маркер текстовый', 'Картридж для принтера'],
+      siz: ['Костюм огнестойкий', 'Ботинки защитные', 'Каска защитная', 'Перчатки нитриловые', 'Очки защитные', 'Противогаз', 'Беруши / наушники'],
+      systems: ['1С: ЗУП', '1С: Бухгалтерия', 'SAP ERP', 'Сетевая папка \\\\fs01\\Цех1', 'Корпоративная почта', 'СЭД', 'АСУ ТП (просмотр)'],
+    },
+    holidays: [
+      ['2026-01-01', 'Новый год'], ['2026-01-02', 'Новый год'], ['2026-01-07', 'Рождество'], ['2026-03-08', 'Международный женский день'], ['2026-03-09', 'Перенос (8 Марта)'],
+      ['2026-03-20', 'Ораза айт'], ['2026-03-21', 'Наурыз'], ['2026-03-22', 'Наурыз'], ['2026-03-23', 'Наурыз'], ['2026-03-24', 'Перенос (Наурыз)'],
+      ['2026-05-01', 'Праздник единства народа Казахстана'], ['2026-05-07', 'День защитника Отечества'], ['2026-05-09', 'День Победы'], ['2026-05-27', 'Курбан айт'],
+      ['2026-07-06', 'День столицы'], ['2026-08-30', 'День Конституции'], ['2026-08-31', 'Перенос (День Конституции)'], ['2026-10-25', 'День Республики'], ['2026-10-26', 'Перенос (День Республики)'],
+      ['2026-12-16', 'День Независимости'],
+    ].map(([d, n]) => ({ d, n })),
+    news: [
+      { id: 'n1', t: now - 2 * D, title: 'Портал «АНПЗ Сервис» запущен!', text: 'Теперь отпуск, ИТ, АХО и СИЗ — в одном окне. Статус заявки виден в любой момент, а Капелька подскажет, что делать.' },
+      { id: 'n2', t: now - 3 * D, title: 'Плановые работы в сети', text: 'В субботу с 10:00 до 12:00 возможны кратковременные перерывы в работе корпоративной почты.' },
+      { id: 'n3', t: now - 6 * D, title: 'Медосмотр в ноябре', text: 'График ежегодного медосмотра доступен у инженеров по охране труда. Запишитесь через каталог «Охрана труда».' },
+    ],
+    templates: {
+      created: 'Заявка {номер} создана. Статус: {статус}.',
+      approval: 'Требуется согласование заявки {номер} от {ФИО}.',
+      status: '{ФИО}, статус заявки {номер} изменён на «{статус}».',
+      comment: 'Новый комментарий в заявке {номер}.',
+      sla80: 'Внимание: по заявке {номер} израсходовано 80% срока SLA.',
+      overdue: 'Эскалация: заявка {номер} просрочена.',
+    },
+    replies: ['Здравствуйте! Заявка принята в работу.', 'Уточните, пожалуйста, детали: ', 'Готово! Проверьте, пожалуйста, результат.', 'Справка готова, её можно забрать в отделе кадров (каб. 214).', 'Специалист подойдёт в течение часа.'],
+    settings: { ldapUrl: 'ldaps://dc01.anpz.local:636', ldapBase: 'OU=Users,DC=anpz,DC=local', smtp: 'smtp.anpz.local:587', smtpFrom: 'portal@anpz.kz', tgBot: '', maxFiles: 10, maxMb: 20, adGroupAdmin: 'ANPZ-Portal-Admins', adGroupIT: 'ANPZ-Portal-IT' },
+    reqs: [], notifs: [], audit: [],
+  };
+
+  const mk = o => {
+    const ty = typeById(o.type), created = now - o.ago * H;
+    const r = {
+      id: 'r' + db.seq, num: numFmt(db.seq++), type: o.type, author: o.author, assignee: o.assignee || null, status: 'new', priority: o.priority || 'normal',
+      subject: o.subject || ty.name, desc: o.desc || '', data: o.data || {}, files: o.files || [], created, updated: created,
+      deadline: addWork(created, ty.sla), doneAt: null, closedAt: null, pausedAt: null, rating: o.rating || null, review: o.review || '',
+      hist: [], comments: [], approvals: [], flags: { n80: true, over: true },
+    };
+    let prev = null;
+    (o.flow || [['new', o.ago, o.author]]).forEach(([s, a, by, note]) => {
+      const ts = now - a * H;
+      r.hist.push({ t: ts, user: by, from: prev, to: s, note: note || '' });
+      if (prev === 'approval' && s === 'new') r.approvals.push({ by, step: 'Руководитель', dec: 'approved', comment: note || '', t: ts });
+      if (s === 'waiting') r.pausedAt = ts;
+      if (s === 'done') r.doneAt = ts;
+      if (['closed', 'cancelled', 'rejected'].includes(s)) r.closedAt = ts;
+      prev = s; r.status = s; r.updated = ts;
+    });
+    (o.comments || []).forEach(([by, text, a, int]) => r.comments.push({ id: uid(), user: by, text, t: now - a * H, internal: !!int, files: [] }));
+    db.reqs.push(r);
+    db.audit.push({ id: uid(), user: o.author, ent: 'Request', eid: r.id, action: 'Создание заявки', old: '', new: r.status, ip: '10.20.1.' + (10 + db.users.findIndex(u => u.id === o.author)), t: created });
+    return r;
+  };
+  const vac = (a, b) => ({ from: a, to: b, days: vacDays(a, b) });
+  mk({ author: 'u8', type: 'hr_cert', ago: 400, data: { kind: 'С места работы', copies: '2', where: 'Банк (ипотека)' }, flow: [['new', 400, 'u8'], ['work', 398, 'u3'], ['done', 390, 'u3'], ['closed', 380, 'u8']], assignee: 'u3', rating: 5, review: 'Быстро и без бумажек!' });
+  mk({ author: 'u2', type: 'hr_trip', ago: 300, data: { city: 'Астана', period: vac('2026-09-14', '2026-09-16'), goal: 'Совещание КМГ по программе модернизации', transport: 'Авиа', hotel: true }, flow: [['new', 300, 'u2'], ['work', 296, 'u3'], ['done', 280, 'u3'], ['closed', 270, 'u2']], assignee: 'u3', rating: 4, review: 'Всё оформили, но билеты пришли поздновато.' });
+  mk({ author: 'u1', type: 'hr_cert', ago: 200, data: { kind: 'О доходах', copies: '1', where: 'ЦОН' }, flow: [['new', 200, 'u1'], ['work', 199, 'u3'], ['done', 190, 'u3'], ['closed', 180, 'u1']], assignee: 'u3', rating: 5, review: 'Спасибо, Дана!' });
+  mk({ author: 'u8', type: 'it_pc', ago: 150, priority: 'high', subject: 'Не печатает принтер в операторной', desc: 'Принтер HP в операторной выдаёт ошибку замятия, бумаги внутри нет.', data: { inv: 'ИНВ-004512', room: 'Операторная №2' }, flow: [['new', 150, 'u8'], ['work', 149, 'u9'], ['done', 135, 'u9'], ['closed', 120, 'u8']], assignee: 'u9', rating: 3, review: 'Починили, но не с первого раза.' });
+  mk({ author: 'u1', type: 'ot_train', ago: 260, data: { kind: 'Пожарная безопасность', date: '2026-09-25' }, flow: [['new', 260, 'u1'], ['work', 250, 'u6'], ['done', 240, 'u6'], ['closed', 230, 'u1']], assignee: 'u6', rating: 5 });
+  mk({ author: 'u2', type: 'aho_car', ago: 100, data: { date: '2026-10-08', time: '09:30', route: 'АНПЗ — Акимат Атырауской области', pax: '3' }, flow: [['new', 100, 'u2'], ['work', 99, 'u5'], ['done', 96, 'u5'], ['closed', 90, 'u2']], assignee: 'u5', rating: 4 });
+  mk({ author: 'u1', type: 'hr_cert', ago: 160, data: { kind: 'Для визы', copies: '1', where: 'Посольство' }, flow: [['new', 160, 'u1'], ['cancelled', 158, 'u1', 'Уже не нужна']] });
+
+  mk({ author: 'u1', type: 'hr_vac', ago: 20, desc: 'Ежегодный трудовой отпуск по графику.', data: { period: vac('2026-11-02', '2026-11-15'), sub: 'Нурлан Беков' }, flow: [['approval', 20, 'u1']] });
+  mk({ author: 'u8', type: 'hr_vac', ago: 50, desc: 'Отпуск по графику, поездка к родственникам.', data: { period: vac('2026-11-09', '2026-11-22'), sub: 'Айгерим Нурланова' }, flow: [['approval', 50, 'u8'], ['new', 30, 'u2', 'Согласовано, замену обеспечим']] });
+  mk({ author: 'u1', type: 'it_pc', ago: 76, priority: 'high', subject: 'Не включается монитор на рабочем месте', desc: 'Монитор не реагирует на кнопку питания, индикатор не горит. Работаю с ноутбука коллеги.', data: { inv: 'ИНВ-003377', room: 'Операторная №1' }, flow: [['new', 76, 'u1'], ['work', 74, 'u4']], assignee: 'u4', comments: [['u4', 'Здравствуйте! Заявка принята в работу. Проверим блок питания.', 74], ['u4', 'Нужна замена БП, ждём со склада.', 50, true]] });
+  mk({ author: 'u8', type: 'it_access', ago: 7, data: { system: 'Сетевая папка \\\\fs01\\Цех1', access: 'Чтение и запись', reason: 'Ведение журнала смены в общей папке цеха' }, flow: [['approval', 9, 'u8'], ['new', 7, 'u2']] });
+  mk({ author: 'u2', type: 'it_soft', ago: 30, data: { soft: 'AutoCAD LT 2026', reason: 'Работа с технологическими схемами установки' }, flow: [['new', 30, 'u2'], ['work', 28, 'u4'], ['waiting', 6, 'u4']], assignee: 'u4', comments: [['u4', 'Уточните, пожалуйста: нужна лицензия на одно рабочее место или на два?', 6]] });
+  mk({ author: 'u1', type: 'aho_stat', ago: 60, data: { item: 'Бумага А4 (пачка)', qty: '5' }, flow: [['new', 60, 'u1'], ['work', 55, 'u5'], ['done', 20, 'u5']], assignee: 'u5', comments: [['u5', 'Готово! Бумагу можно забрать на складе АХО, окно 3.', 20]] });
+  mk({ author: 'u1', type: 'ot_siz', ago: 3, data: { item: 'Ботинки защитные', size: '38', reason: 'Износ' }, flow: [['new', 3, 'u1']] });
+  mk({ author: 'u8', type: 'aho_fix', ago: 5, priority: 'high', desc: 'Течёт кран в санузле на 2 этаже, вода на полу.', data: { bld: 'Цех №1 (ЭЛОУ-АВТ)', room: 'Санузел, 2 этаж' }, flow: [['new', 5, 'u8'], ['work', 4, 'u5']], assignee: 'u5' });
+  mk({ author: 'u2', type: 'aho_pass', ago: 2, data: { kind: 'Гостевой', guest: 'Ким Сергей Олегович', date: '2026-10-16', time: '10:00', plate: '' }, flow: [['new', 2, 'u2']] });
+  mk({ author: 'u8', type: 'hr_cert', ago: 12, data: { kind: 'С места работы', copies: '1', where: 'Детский сад' }, flow: [['new', 12, 'u8']] });
+
+  db.reqs.forEach(r => { r.flags = { n80: false, over: false }; if (!ACTIVE.includes(r.status)) r.flags = { n80: true, over: true }; });
+  db.notifs.push(
+    { id: uid(), user: 'u2', text: 'Требуется согласование заявки ' + db.reqs.find(r => r.author === 'u1' && r.type === 'hr_vac').num + ' от Айгерим Нурланова.', rid: db.reqs.find(r => r.author === 'u1' && r.type === 'hr_vac').id, t: now - 20 * H, read: false, ch: ['portal', 'email', 'tg'] },
+    { id: uid(), user: 'u1', text: 'Статус заявки ' + db.reqs.find(r => r.type === 'aho_stat').num + ' изменён на «Выполнена». Оцените работу!', rid: db.reqs.find(r => r.type === 'aho_stat').id, t: now - 20 * H, read: false, ch: ['portal', 'email'] },
+  );
+  db.audit.sort((a, b) => b.t - a.t);
+  return db;
+}
+
+/* ---------- notifications & audit ---------- */
+function fillTpl(k, r) { const a = user(r.author); return (db.templates[k] || '').replace(/\{номер\}/g, r.num).replace(/\{статус\}/g, I18N.ru['st_' + r.status]).replace(/\{ФИО\}/g, a.fio); }
+function notify(ids, text, rid, ch = ['portal', 'email']) {
+  uniq(ids).forEach(id => {
+    if (id === db.session.uid) return;
+    const u = db.users.find(x => x.id === id); if (!u) return;
+    const chs = ch.filter(c => c === 'portal' || u.ch?.[c]);
+    db.notifs.unshift({ id: uid(), user: id, text, rid, t: Date.now(), read: false, ch: chs });
+  });
+}
+function audit(action, rid, oldV, newV, ent = 'Request') {
+  const u = me();
+  db.audit.unshift({ id: uid(), user: u ? u.id : 'system', ent, eid: rid, action, old: oldV ?? '', new: newV ?? '', ip: u ? '10.20.1.' + (10 + db.users.indexOf(u)) : '127.0.0.1', t: Date.now() });
+}
+const managersOf = dept => db.users.filter(u => u.active && has(u, 'manager') && u.mdept === dept).map(u => u.id);
+const admins = () => db.users.filter(u => u.active && has(u, 'admin')).map(u => u.id);
+
+/* ---------- RBAC ---------- */
+const isMgrOf = (u, r) => has(u, 'manager') && u.mdept === deptOf(r);
+const isHeadOf = (u, r) => has(u, 'head') && user(r.author).manager === u.id;
+const canView = (u, r) => r.author === u.id || has(u, 'admin') || (r.status !== 'draft' && (isMgrOf(u, r) || isHeadOf(u, r)));
+const canProcess = (u, r) => isMgrOf(u, r) || has(u, 'admin');
+
+/* ---------- lifecycle ---------- */
+function setStatus(r, s, note, by) {
+  const old = r.status, now = Date.now();
+  if (old === 'waiting' && s !== 'waiting' && r.pausedAt) { r.deadline = addWork(r.deadline, workHoursBetween(r.pausedAt, now)); r.pausedAt = null; }
+  if (s === 'waiting') r.pausedAt = now;
+  if (s === 'done') r.doneAt = now;
+  if (s === 'work' && old === 'done') { r.doneAt = null; }
+  if (['closed', 'cancelled', 'rejected'].includes(s)) r.closedAt = now;
+  r.status = s; r.updated = now;
+  r.hist.push({ t: now, user: by || db.session.uid, from: old, to: s, note: note || '' });
+  audit('Смена статуса', r.id, I18N.ru['st_' + old], I18N.ru['st_' + s]);
+  if (r.author !== (by || db.session.uid)) notify([r.author], fillTpl('status', r) + (note ? ' Комментарий: ' + note : ''), r.id, ['portal', 'email', 'tg']);
+}
+function autoProcess() {
+  const now = Date.now(); let ch = false;
+  db.reqs.forEach(r => {
+    if (r.status === 'done' && r.doneAt && now - r.doneAt > 3 * D) {
+      const old = r.status; r.status = 'closed'; r.closedAt = now;
+      r.hist.push({ t: now, user: 'system', from: old, to: 'closed', note: 'Закрыта автоматически через 3 дня' });
+      db.audit.unshift({ id: uid(), user: 'system', ent: 'Request', eid: r.id, action: 'Автозакрытие', old: 'Выполнена', new: 'Закрыта', ip: '127.0.0.1', t: now }); ch = true;
+    }
+    if (['new', 'work'].includes(r.status)) {
+      const s = sla(r), dept = deptOf(r);
+      if (s.pct >= .8 && !r.flags.n80) { r.flags.n80 = true; db.notifs.unshift(...uniq(r.assignee ? [r.assignee] : managersOf(dept)).map(id => ({ id: uid(), user: id, text: fillTpl('sla80', r), rid: r.id, t: now, read: false, ch: ['portal', 'email'] }))); ch = true; }
+      if (s.over && !r.flags.over) { r.flags.over = true; db.notifs.unshift(...uniq([...managersOf(dept), ...admins()]).map(id => ({ id: uid(), user: id, text: fillTpl('overdue', r), rid: r.id, t: now, read: false, ch: ['portal', 'email'] }))); db.audit.unshift({ id: uid(), user: 'system', ent: 'Request', eid: r.id, action: 'Эскалация SLA', old: '', new: 'Просрочена', ip: '127.0.0.1', t: now }); ch = true; }
+    }
+  });
+  if (ch) save();
+}
+
+/* ---------- mascot «Капелька» ---------- */
+function mascot(em = 'hello', size = 120, cls = '') {
+  const W = '#FFFFFF', N = '#1E2A44';
+  const eyesOpen = (dx = 0, dy = 0) => `<ellipse cx="46" cy="88" rx="8.5" ry="10" fill="${W}" stroke="${N}" stroke-width="2"/><ellipse cx="74" cy="88" rx="8.5" ry="10" fill="${W}" stroke="${N}" stroke-width="2"/><circle cx="${47 + dx}" cy="${90 + dy}" r="4.5" fill="${N}"/><circle cx="${75 + dx}" cy="${90 + dy}" r="4.5" fill="${N}"/><circle cx="${48.5 + dx}" cy="${88 + dy}" r="1.6" fill="${W}"/><circle cx="${76.5 + dx}" cy="${88 + dy}" r="1.6" fill="${W}"/>`;
+  const parts = {
+    hello: eyesOpen() + `<path d="M50 105 Q60 115 70 105" fill="none" stroke="${W}" stroke-width="3.5" stroke-linecap="round"/><g class="wave"><path d="M98 98 Q112 88 110 72" fill="none" stroke="#2A3858" stroke-width="7" stroke-linecap="round"/><circle cx="110" cy="70" r="6" fill="#2A3858" stroke="${N}" stroke-width="2"/></g>`,
+    happy: `<path d="M38 90 Q46 79 54 90" fill="none" stroke="${W}" stroke-width="4" stroke-linecap="round"/><path d="M66 90 Q74 79 82 90" fill="none" stroke="${W}" stroke-width="4" stroke-linecap="round"/><path d="M47 102 Q60 122 73 102 Z" fill="#FF6B6B" stroke="${W}" stroke-width="2.5" stroke-linejoin="round"/><path d="M14 70 l6 -6 M106 70 l-6 -6 M20 52 l4 2 M100 52 l-4 2" stroke="#FF9F1C" stroke-width="3" stroke-linecap="round"/>`,
+    think: eyesOpen(2, -4) + `<circle cx="63" cy="108" r="4" fill="none" stroke="${W}" stroke-width="3"/><text x="96" y="46" font-family="Nunito,sans-serif" font-weight="900" font-size="26" fill="#FF9F1C" stroke="${N}" stroke-width="1.5">?</text>`,
+    sad: eyesOpen(0, 3) + `<path d="M37 76 L54 80 M83 76 L66 80" stroke="${W}" stroke-width="3" stroke-linecap="round"/><path d="M50 112 Q60 103 70 112" fill="none" stroke="${W}" stroke-width="3.5" stroke-linecap="round"/><path d="M84 98 q-4 7 0 9 q4 -2 0 -9z" fill="#7FC4FF" stroke="${N}" stroke-width="1.5"/>`,
+    work: eyesOpen(-2, 0) + `<path d="M37 78 L54 76 M83 78 L66 76" stroke="${W}" stroke-width="3" stroke-linecap="round"/><path d="M51 108 H69" stroke="${W}" stroke-width="3.5" stroke-linecap="round"/><g transform="rotate(35 104 96)"><rect x="100" y="80" width="8" height="30" rx="3" fill="#B8C2D6" stroke="${N}" stroke-width="2"/><path d="M96 76 a10 10 0 1 0 16 0 l-4 6 h-8z" fill="#B8C2D6" stroke="${N}" stroke-width="2"/></g>`,
+    sleep: `<path d="M38 90 Q46 95 54 90" fill="none" stroke="${W}" stroke-width="3.5" stroke-linecap="round"/><path d="M66 90 Q74 95 82 90" fill="none" stroke="${W}" stroke-width="3.5" stroke-linecap="round"/><ellipse cx="60" cy="108" rx="4" ry="3" fill="none" stroke="${W}" stroke-width="2.5"/><text x="90" y="44" font-family="Nunito,sans-serif" font-weight="900" font-size="20" fill="#2F80ED" stroke="${N}" stroke-width="1">z</text><text x="102" y="30" font-family="Nunito,sans-serif" font-weight="900" font-size="14" fill="#2F80ED" stroke="${N}" stroke-width="1">z</text>`,
+  };
+  return `<svg class="mascot ${cls}" width="${size}" height="${size * 1.1}" viewBox="0 0 124 136" role="img" aria-label="Капелька"><ellipse cx="60" cy="132" rx="30" ry="4" fill="#000" opacity=".12"/>
+  <path d="M60 14 C50 34 20 62 20 94 A40 40 0 0 0 100 94 C100 62 70 34 60 14 Z" fill="#2A3858" stroke="${N}" stroke-width="3"/>
+  <ellipse cx="34" cy="96" rx="5" ry="12" fill="#fff" opacity=".22" transform="rotate(12 34 96)"/>
+  <ellipse cx="36" cy="104" rx="6" ry="3.5" fill="#FF8FA3" opacity=".7"/><ellipse cx="84" cy="104" rx="6" ry="3.5" fill="#FF8FA3" opacity=".7"/>
+  ${parts[em] || parts.hello}
+  <path d="M30 62 Q31 28 60 26 Q89 28 90 62 Z" fill="#FF9F1C" stroke="${N}" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M60 27 V60 M46 31 Q42 44 42 60 M74 31 Q78 44 78 60" stroke="${N}" stroke-width="2" fill="none" opacity=".55"/>
+  <rect x="22" y="57" width="76" height="10" rx="5" fill="#FFB547" stroke="${N}" stroke-width="3"/>
+  </svg>`;
+}
+function catIcon(name, s = 62) {
+  const N = '#1E2A44';
+  const g = {
+    suit: `<rect x="10" y="22" width="44" height="32" rx="6" fill="#FF9F1C" stroke="${N}" stroke-width="3"/><path d="M24 22 v-6 a3 3 0 0 1 3 -3 h10 a3 3 0 0 1 3 3 v6" fill="none" stroke="${N}" stroke-width="3"/><path d="M10 34 h44" stroke="${N}" stroke-width="3"/><rect x="28" y="30" width="8" height="8" rx="2" fill="#FFF8EE" stroke="${N}" stroke-width="2.5"/>`,
+    pc: `<rect x="8" y="12" width="48" height="32" rx="5" fill="#2F80ED" stroke="${N}" stroke-width="3"/><rect x="14" y="18" width="36" height="20" rx="3" fill="#CFE3FB" stroke="${N}" stroke-width="2"/><path d="M26 44 l-3 9 h18 l-3 -9" fill="#B8C2D6" stroke="${N}" stroke-width="3" stroke-linejoin="round"/><circle cx="25" cy="26" r="2" fill="${N}"/><circle cx="39" cy="26" r="2" fill="${N}"/><path d="M27 31 q5 4 10 0" fill="none" stroke="${N}" stroke-width="2" stroke-linecap="round"/>`,
+    wrench: `<g transform="rotate(-45 32 32)"><rect x="27" y="22" width="10" height="36" rx="5" fill="#B8C2D6" stroke="${N}" stroke-width="3"/><path d="M20 10 a13 13 0 1 0 24 0 l-6 9 h-12 z" fill="#B8C2D6" stroke="${N}" stroke-width="3" stroke-linejoin="round"/></g><circle cx="46" cy="46" r="9" fill="#27AE60" stroke="${N}" stroke-width="3"/><path d="M42 46 l3 3 l5 -6" fill="none" stroke="${N}" stroke-width="2.5" stroke-linecap="round"/>`,
+    helmet: `<path d="M12 42 Q12 14 32 13 Q52 14 52 42 Z" fill="#FF9F1C" stroke="${N}" stroke-width="3" stroke-linejoin="round"/><path d="M32 14 V40 M22 18 Q19 28 19 40 M42 18 Q45 28 45 40" stroke="${N}" stroke-width="2" fill="none" opacity=".6"/><rect x="6" y="40" width="52" height="9" rx="4.5" fill="#FFB547" stroke="${N}" stroke-width="3"/>`,
+    star: `<path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2z" fill="#F2C94C" stroke="${N}" stroke-width="3" stroke-linejoin="round"/>`,
+  };
+  return `<svg class="ico" width="${s}" height="${s}" viewBox="0 0 64 64" aria-hidden="true">${g[name] || g.star}</svg>`;
+}
+const bellIco = `<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4z" fill="#FF9F1C" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M10 21a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="2"/></svg>`;
+
+/* ---------- UI helpers ---------- */
+function toast(msg, kind = '') { const el = document.createElement('div'); el.className = 'toast ' + kind; el.textContent = msg; document.getElementById('toasts').appendChild(el); setTimeout(() => el.remove(), 3500); }
+function confetti() {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cols = ['#2F80ED', '#FF9F1C', '#27AE60', '#F2C94C', '#EB5757', '#B9A6F0'];
+  for (let i = 0; i < 90; i++) {
+    const c = document.createElement('i'); c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw'; c.style.background = cols[i % cols.length];
+    c.style.animationDuration = (1.6 + Math.random() * 1.6) + 's'; c.style.animationDelay = Math.random() * .4 + 's';
+    c.style.transform = `rotate(${Math.random() * 360}deg)`;
+    document.body.appendChild(c); setTimeout(() => c.remove(), 3800);
+  }
+}
+function modal(html) {
+  const m = document.createElement('div'); m.className = 'modal-bg';
+  m.innerHTML = `<div class="modal card" role="dialog" aria-modal="true">${html}</div>`;
+  document.body.appendChild(m);
+  m.addEventListener('keydown', e => { if (e.key === 'Escape') m.querySelector('[data-x]')?.click(); });
+  setTimeout(() => (m.querySelector('textarea,select,[data-ok]') || m.querySelector('button'))?.focus(), 30);
+  return m;
+}
+function ask({ title, text = '', label = 'Комментарий', input = 'textarea', options = null, req = false, ok = 'OK', cls = 'primary', em = 'think' }) {
+  return new Promise(res => {
+    const field = options ? `<select id="askv">${options.map(([v, l]) => `<option value="${esc(v)}">${esc(l)}</option>`).join('')}</select>`
+      : input ? `<textarea id="askv" rows="3"></textarea>` : '';
+    const m = modal(`<div class="row" style="align-items:flex-start;flex-wrap:nowrap">${mascot(em, 64, 'still')}<div style="flex:1"><h3>${esc(title)}</h3>${text ? `<p class="muted">${esc(text)}</p>` : ''}
+      ${field ? `<div class="fld"><label for="askv">${esc(label)}${req ? ' <span class="req">*</span>' : ''}</label>${field}<div class="err" id="aske"></div></div>` : ''}</div></div>
+      <div class="row end"><button class="btn" data-x>Отмена</button><button class="btn ${cls}" data-ok>${esc(ok)}</button></div>`);
+    const v = m.querySelector('#askv');
+    m.querySelector('[data-x]').onclick = () => { m.remove(); res(null); };
+    m.querySelector('[data-ok]').onclick = () => { const val = v ? v.value.trim() : ''; if (req && !val) { m.querySelector('#aske').textContent = 'Комментарий с причиной обязателен'; v.focus(); return; } m.remove(); res(val); };
+  });
+}
+function go(h) { if (location.hash === h) render(); else location.hash = h; }
+function download(name, rows) {
+  const csv = '﻿' + rows.map(r => r.map(c => '"' + String(c ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1500);
+}
+function applyTheme() { const th = db.ui.theme; if (th === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', th); document.documentElement.lang = db.ui.lang === 'kz' ? 'kk' : 'ru'; }
+const emptyState = (txt, em = 'sleep') => `<div class="empty">${mascot(em, 110)}<p>${esc(txt)}</p></div>`;
+
+/* ---------- render ---------- */
+function render() {
+  post = [];
+  applyTheme();
+  const u = me();
+  if (u && Date.now() - db.session.last > SESSION_TTL) { db.session.uid = null; save(); toast('Сессия завершена после 8 часов неактивности'); return render(); }
+  if (!u) { app.innerHTML = viewLogin(); return; }
+  db.session.last = Date.now();
+  autoProcess();
+  const ae = document.activeElement, fid = ae && ae.id, sel = ae && 'selectionStart' in ae ? ae.selectionStart : null;
+  const [path, query] = (location.hash.slice(1) || '/home').split('?');
+  const parts = path.split('/').filter(Boolean), q = new URLSearchParams(query || '');
+  let html;
+  try { html = route(parts, q, u); }
+  catch (e) { if (e === FORBID) html = view403(); else { console.error(e); html = `<div class="card">${emptyState('Что-то пошло не так: ' + e.message, 'sad')}</div>`; } }
+  app.innerHTML = `<div class="demo-bar">Демо-прототип по PRD: данные хранятся только в этом браузере · <a href="#" onclick="A.reset();return false" style="color:#1E2A44">сбросить демо-данные</a></div>` + header(u) + `<main id="main">${html}</main>`;
+  if (fid) { const el = document.getElementById(fid); if (el) { el.focus(); try { if (sel != null) el.setSelectionRange(sel, sel); } catch (e) { } } }
+  post.forEach(f => f());
+  save();
+}
+function route(p, q, u) {
+  switch (p[0] || 'home') {
+    case 'home': return viewHome(u);
+    case 'catalog': return viewCatalog(u, p[1]);
+    case 'new': return viewForm(u, p[1], q);
+    case 'edit': return viewForm(u, null, q, p[1]);
+    case 'my': return viewMy(u);
+    case 'r': return viewCard(u, p[1]);
+    case 'approvals': need(has(u, 'head')); return viewApprovals(u);
+    case 'vacations': need(has(u, 'head') || has(u, 'admin')); return viewVacations(u);
+    case 'queue': need(has(u, 'manager') || has(u, 'admin')); return viewQueue(u);
+    case 'dash': need(has(u, 'manager')); return viewDash(u);
+    case 'profile': return viewProfile(u);
+    case 'admin':
+      need(has(u, 'admin'));
+      switch (p[1]) {
+        case 'users': return viewUsers(u);
+        case 'catalog': return viewBuilder(u);
+        case 'dicts': return viewDicts(u);
+        case 'analytics': return viewAnalytics(u);
+        case 'audit': return viewAudit(u);
+        case 'settings': return viewSettings(u);
+      }
+  }
+  return view404();
+}
+function navItems(u) {
+  const it = [['home', 'home'], ['catalog', 'catalog'], ['my', 'my']];
+  if (has(u, 'head')) it.push(['approvals', 'approvals', db.reqs.filter(r => r.status === 'approval' && isHeadOf(u, r)).length], ['vacations', 'vacations']);
+  if (has(u, 'manager')) it.push(['queue', 'queue', db.reqs.filter(r => r.status === 'new' && isMgrOf(u, r)).length], ['dash', 'dash']);
+  if (has(u, 'admin')) it.push(['queue', 'queue'], ['admin/users', 'users'], ['admin/catalog', 'builder'], ['admin/dicts', 'dicts'], ['admin/analytics', 'analytics'], ['admin/audit', 'audit'], ['admin/settings', 'settings']);
+  const seen = new Set(); return it.filter(([h]) => !seen.has(h) && seen.add(h));
+}
+function header(u) {
+  const mine = db.notifs.filter(n => n.user === u.id), unread = mine.filter(n => !n.read).length;
+  const cur = (location.hash.slice(2) || 'home').split('?')[0];
+  const nav = navItems(u).map(([h, k, c]) => `<a href="#/${h}" class="${cur === h || cur.startsWith(h + '/') || (h === 'my' && cur.startsWith('r/')) ? 'on' : ''}">${t(k)}${c ? `<span class="cnt">${c}</span>` : ''}</a>`).join('');
+  const bell = ui.open === 'bell' ? `<div class="drop card">
+      <div class="row between" style="margin-bottom:8px"><b>${t('notifs')}</b>${unread ? `<button class="btn sm ghost" onclick="A.readAll()">${t('readall')}</button>` : ''}</div>
+      ${mine.length ? mine.slice(0, 15).map(n => `<a class="nitem ${n.read ? '' : 'unread'}" href="#/r/${n.rid}" onclick="A.readN('${n.id}')"><div class="small" style="font-weight:700">${esc(n.text)}</div><div class="row small muted" style="margin-top:3px;gap:6px">${ago(n.t)} <span class="chips">${n.ch.map(c => `<span class="chip">${{ portal: 'портал', email: 'email', tg: 'Telegram' }[c]}</span>`).join('')}</span></div></a>`).join('') : `<p class="muted small">${t('nonotif')}</p>`}
+    </div>` : '';
+  const menu = ui.open === 'me' ? `<div class="drop card" style="width:260px">
+      <b>${esc(u.fio)}</b><div class="small muted">${esc(u.pos)}</div><div class="chips" style="margin:6px 0 10px">${u.roles.map(r => `<span class="chip">${roleName(r)}</span>`).join('')}</div>
+      <a class="nitem" href="#/profile">${t('profile')}</a>
+      <button class="nitem btn ghost" style="width:100%;justify-content:flex-start" onclick="A.logout()">${t('logout')}</button></div>` : '';
+  return `<header class="top">
+    <a class="logo" href="#/home" aria-label="АНПЗ Сервис — на главную">${mascot('hello', 30, 'still')}<span>АНПЗ<b>Сервис</b></span></a>
+    <nav class="nav" aria-label="Основное меню">${nav}</nav>
+    <div class="tools">
+      <button class="btn sm ghost" onclick="A.lang()" title="Тілді ауыстыру / Сменить язык">${db.ui.lang === 'ru' ? 'ҚАЗ' : 'РУС'}</button>
+      <button class="btn sm ghost" onclick="A.theme()" title="Тема: ${db.ui.theme}" aria-label="Сменить тему">${db.ui.theme === 'dark' ? '☾' : db.ui.theme === 'light' ? '☀' : '◐'}</button>
+      <div class="pop"><button class="btn sm" onclick="A.toggle('bell')" aria-label="${t('notifs')}: ${unread}">${bellIco}${unread ? `<span class="cnt">${unread}</span>` : ''}</button>${bell}</div>
+      <div class="pop"><button class="btn sm" onclick="A.toggle('me')" aria-label="Меню пользователя"><span class="ava">${initials(u.fio)}</span><span class="hide-m">${esc(shortName(u.fio))}</span></button>${menu}</div>
+    </div></header>`;
+}
+const roleName = r => ({ employee: 'Работник', head: 'Руководитель', manager: 'Менеджер', admin: 'Администратор' }[r] || r);
+const deptName = d => ({ HR: 'HR', IT: 'ИТ', AHO: 'АХО', OT: 'ОТ' }[d] || '—');
+
+/* ---------- views: login / errors ---------- */
+function viewLogin() {
+  const groups = [['Работники', ['u1', 'u8']], ['Руководитель', ['u2']], ['Менеджеры', ['u3', 'u4', 'u9', 'u5', 'u6']], ['Администратор', ['u7']]];
+  return `<div class="login">
+    <div class="card hero" style="margin-bottom:22px">${mascot('hello', 130)}
+      <div><h1>АНПЗ Сервис</h1><p style="font-size:17px;font-weight:700">Единое окно для внутренних заявок Атырауского НПЗ: отпуск, ИТ, АХО, охрана труда.</p>
+      <div class="bubble small">${t('login')} (SSO). В домене вход выполняется без пароля — для демо выберите сотрудника, под которым «вошли» в Windows.</div></div></div>
+    ${groups.map(([g, ids]) => `<h3 style="margin-top:18px">${g}</h3><div class="ulist">${ids.map(id => { const x = user(id); return `<button class="ubtn" onclick="A.login('${id}')"><span class="ava">${initials(x.fio)}</span><span><b>${esc(x.fio)}</b><br><span class="small muted">${esc(x.pos)}</span><br><span class="chips">${x.roles.filter(r => r !== 'employee' || x.roles.length === 1).map(r => `<span class="chip">${roleName(r)}${r === 'manager' ? ' · ' + deptName(x.mdept) : ''}</span>`).join('')}</span></span></button>`; }).join('')}</div>`).join('')}
+    <p class="small muted" style="margin-top:24px">Профиль (ФИО, должность, подразделение, руководитель, табельный номер) подтягивается из атрибутов AD при входе. Роли назначаются по группам AD или в админке. Сессия завершается после 8 часов неактивности.</p>
+  </div>`;
+}
+const view404 = () => `<div class="card">${emptyState('404 — ' + t('lost'), 'sad')}<div class="row" style="justify-content:center"><a class="btn primary" href="#/home">${t('home')}</a></div></div>`;
+const view403 = () => `<div class="card">${emptyState('403 — ' + t('forbidden') + '. Сервер отклонил запрос: у вас нет прав на эту страницу или заявку.', 'sad')}<div class="row" style="justify-content:center"><a class="btn primary" href="#/home">${t('home')}</a></div></div>`;
+
+/* ---------- views: employee ---------- */
+function reqRow(r, cols = ['num', 'subj', 'status', 'sla', 'created']) {
+  const ty = typeOf(r), c = catById(ty?.cat);
+  const cell = {
+    num: `<td class="num"><a href="#/r/${r.id}">${r.num}</a></td>`,
+    subj: `<td><b>${esc(r.subject)}</b><div class="small muted">${esc(catName(c))} · ${esc(ty?.name)}</div></td>`,
+    author: `<td>${esc(shortName(user(r.author).fio))}<div class="small muted">${esc(user(r.author).dept || '')}</div></td>`,
+    prio: `<td>${prBadge(r.priority)}</td>`,
+    status: `<td>${badge(r.status)}</td>`,
+    assignee: `<td>${r.assignee ? esc(shortName(user(r.assignee).fio)) : '<span class="muted">—</span>'}</td>`,
+    sla: `<td>${slaTag(r)}</td>`,
+    created: `<td class="num small">${fdt(r.created)}</td>`,
+  };
+  return `<tr>${cols.map(k => cell[k]).join('')}</tr>`;
+}
+function reqTable(list, cols, empty) {
+  const head = { num: t('number'), subj: t('subject'), author: t('author'), prio: t('priority'), status: t('status'), assignee: t('assignee'), sla: 'SLA', created: t('created') };
+  if (!list.length) return `<div class="card flat">${emptyState(empty || t('empty'))}</div>`;
+  return `<div class="tw"><table class="tbl"><thead><tr>${cols.map(c => `<th>${head[c]}</th>`).join('')}</tr></thead><tbody>${list.map(r => reqRow(r, cols)).join('')}</tbody></table></div>`;
+}
+function viewHome(u) {
+  const mine = db.reqs.filter(r => r.author === u.id && (ACTIVE.includes(r.status) || r.status === 'done' || r.status === 'draft')).sort((a, b) => b.updated - a.updated);
+  const tips = ['Совет: черновик сохраняется сам — можно закрыть форму и вернуться позже.', 'Совет: статус заявки и чат с исполнителем — в карточке заявки.', 'Совет: выполненную заявку можно вернуть в работу в течение 3 дней.', 'Совет: каналы уведомлений настраиваются в профиле.'];
+  const extra = [];
+  if (has(u, 'head')) { const n = db.reqs.filter(r => r.status === 'approval' && isHeadOf(u, r)).length; extra.push(`<a class="card tile" href="#/approvals" style="background:var(--chip)">${catIcon('star', 46)}<h3>${n} ${n === 1 ? 'заявка ждёт' : 'заявок ждут'} согласования</h3><p class="muted small">Подчинённые ждут вашего решения</p></a>`); }
+  if (has(u, 'manager')) { const n = db.reqs.filter(r => r.status === 'new' && isMgrOf(u, r)).length, o = db.reqs.filter(r => isMgrOf(u, r) && sla(r).over).length; extra.push(`<a class="card tile" href="#/queue" style="background:var(--chip)">${catIcon(db.cats.find(c => c.id === u.mdept)?.icon, 46)}<h3>Очередь ${deptName(u.mdept)}: ${n} новых</h3><p class="small" style="color:${o ? 'var(--red)' : 'var(--muted)'};font-weight:800">${o ? 'Просрочено: ' + o : 'Просрочек нет'}</p></a>`); }
+  return `<div class="stack">
+    <section class="card hero">${mascot('hello', 120)}
+      <div style="flex:1"><h1>${t('hello')}, ${esc(u.fio.split(' ')[1] ? u.fio.split(' ')[0] : u.fio)}!</h1><p style="font-size:17px;font-weight:700">${t('helpq')}</p>
+      <div class="bubble small" style="margin-bottom:14px">${tips[new Date().getDate() % tips.length]}</div>
+      <a class="btn accent big" href="#/catalog">＋ ${t('create')}</a></div>
+    </section>
+    ${extra.length ? `<div class="tiles">${extra.join('')}</div>` : ''}
+    <section><h2>${t('catalog')}</h2><div class="tiles">${db.cats.map(c => `<a class="card tile" href="#/catalog/${c.id}">${catIcon(c.icon)}<h3>${esc(catName(c))}</h3><p class="muted small" style="margin:0">${esc(c.desc)}</p></a>`).join('')}</div></section>
+    <div class="grid2">
+      <section><div class="sec-title"><h2>${t('active')}</h2><a href="#/my" class="small">Все заявки →</a></div>
+        ${mine.length ? reqTable(mine.slice(0, 6), ['num', 'subj', 'status', 'sla']) : `<div class="card flat">${emptyState(t('empty'))}</div>`}</section>
+      <section><h2>${t('news')}</h2><div class="card">${db.news.slice(0, 4).map(n => `<div class="news"><b>${esc(n.title)}</b><div class="small muted">${new Date(n.t).toLocaleDateString('ru-RU')}</div><div class="small">${esc(n.text)}</div></div>`).join('') || '<p class="muted">Новостей нет</p>'}</div></section>
+    </div></div>`;
+}
+function viewCatalog(u, catId) {
+  post.push(() => { const s = document.getElementById('csearch'); s && s.addEventListener('input', () => { const v = s.value.toLowerCase().trim(); document.querySelectorAll('[data-tname]').forEach(el => el.hidden = v && !el.dataset.tname.includes(v)); document.querySelectorAll('[data-csec]').forEach(sec => sec.hidden = ![...sec.querySelectorAll('[data-tname]')].some(x => !x.hidden)); }); });
+  const cats = catId ? db.cats.filter(c => c.id === catId) : db.cats;
+  return `<div class="crumbs"><a href="#/home">${t('home')}</a> / ${t('catalog')}${catId ? ' / ' + esc(catName(catById(catId))) : ''}</div>
+   <div class="sec-title"><h1>${t('catalog')}</h1><div class="row">${catId ? `<a class="btn sm" href="#/catalog">Все категории</a>` : ''}</div></div>
+   <div class="row" style="margin-bottom:18px">${mascot('think', 56, 'still')}<input id="csearch" type="search" placeholder="${t('search')}: «отпуск», «принтер», «пропуск»…" style="max-width:520px" aria-label="Поиск услуги"></div>
+   ${cats.map(c => { const ts = db.types.filter(x => x.cat === c.id && x.active); return `<section data-csec style="margin-bottom:24px"><div class="row" style="margin-bottom:10px">${catIcon(c.icon, 40)}<h2 style="margin:0">${esc(catName(c))}</h2></div>
+     <div class="tlist">${ts.map(x => `<a class="titem" href="#/new/${x.id}" data-tname="${esc((x.name + ' ' + c.ru).toLowerCase())}"><b>${esc(x.name)}</b><span class="chips"><span class="chip">SLA: ${slaHuman(x.sla)}</span>${x.approval ? '<span class="chip">согласование руководителя</span>' : ''}</span></a>`).join('') || '<p class="muted">Нет активных услуг</p>'}</div></section>`; }).join('')}`;
+}
+function fieldHTML(f, v) {
+  const id = 'f_' + f.k, rq = f.req ? ' <span class="req">*</span>' : '';
+  const lab = `<label for="${id}">${esc(f.l)}${rq}</label>`;
+  switch (f.t) {
+    case 'textarea': return `<div class="fld">${lab}<textarea id="${id}" name="${id}" rows="3" placeholder="${esc(f.ph || '')}">${esc(v || '')}</textarea><div class="err"></div></div>`;
+    case 'period': { const p = v || {}; return `<div class="fld" data-period="${f.k}"><span class="lbl">${esc(f.l)}${rq}</span><div class="row2"><input type="date" id="${id}_from" name="${id}_from" value="${esc(p.from || '')}" aria-label="${esc(f.l)}: с"><input type="date" id="${id}_to" name="${id}_to" value="${esc(p.to || '')}" aria-label="${esc(f.l)}: по"></div><div class="hint" data-days="${f.k}"></div><div class="err"></div></div>`; }
+    case 'select': case 'dict': { const opts = f.t === 'dict' ? (db.dicts[f.dict] || []) : (f.opt || []); return `<div class="fld">${lab}<select id="${id}" name="${id}"><option value="">— выберите —</option>${opts.map(o => `<option ${o === v ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select><div class="err"></div></div>`; }
+    case 'checkbox': return `<div class="fld"><label class="chk"><input type="checkbox" id="${id}" name="${id}" ${v ? 'checked' : ''}> ${esc(f.l)}</label></div>`;
+    case 'file': return `<div class="fld">${lab}<input type="file" id="${id}" name="${id}" accept="image/jpeg,image/png,application/pdf">${v ? `<div class="hint">Ранее приложено: ${esc(v)}</div>` : ''}<div class="err"></div></div>`;
+    default: { const tp = { number: 'number', date: 'date', time: 'time' }[f.t] || 'text'; return `<div class="fld">${lab}<input type="${tp}" ${tp === 'number' ? 'min="1" inputmode="numeric"' : ''} id="${id}" name="${id}" value="${esc(v ?? f.def ?? '')}" placeholder="${esc(f.ph || '')}"><div class="err"></div></div>`; }
+  }
+}
+function viewForm(u, typeId, q, draftId) {
+  let ty, pre = {}, r = null;
+  if (draftId) { r = req(draftId); need(r && r.author === u.id); if (r.status !== 'draft') { location.replace('#/r/' + r.id); return ''; } ty = typeOf(r); pre = r; }
+  else { ty = typeById(typeId); if (!ty || !ty.active) return view404(); const src = q.get('from') && req(q.get('from')); if (src && src.author === u.id) pre = { subject: src.subject, desc: src.desc, priority: src.priority, data: JSON.parse(JSON.stringify(src.data)) }; }
+  const c = catById(ty.cat), head = u.manager ? user(u.manager) : null;
+  ui.form = { type: ty.id, draft: r ? r.id : null };
+  post.push(bindForm);
+  const route = ty.approval ? (head ? `Руководитель (${esc(shortName(head.fio))}) → ${deptName(ty.cat)}` : `${deptName(ty.cat)} (руководитель в AD не указан — согласование пропускается)`) : deptName(ty.cat);
+  return `<div class="crumbs"><a href="#/home">${t('home')}</a> / <a href="#/catalog/${c.id}">${esc(catName(c))}</a> / ${esc(ty.name)}</div>
+  <div class="grid2">
+   <form id="rf" class="card" novalidate onsubmit="return A.submit(event)">
+     <div class="row" style="margin-bottom:6px">${catIcon(c.icon, 44)}<h1 style="margin:0">${esc(ty.name)}</h1></div>
+     <p class="small muted" id="draftst">${r ? 'Черновик ' + r.num + ' · сохранён ' + ago(r.updated) : 'Черновик сохранится автоматически'}</p>
+     <div class="fld"><label for="f__subject">${t('subject')} <span class="req">*</span></label><input id="f__subject" name="f__subject" value="${esc(pre.subject || ty.name)}" maxlength="150"><div class="err"></div></div>
+     ${ty.fields.map(f => fieldHTML(f, pre.data?.[f.k])).join('')}
+     <div class="fld"><label for="f__desc">${ty.descReq ? 'Описание' : 'Комментарий / описание'}${ty.descReq ? ' <span class="req">*</span>' : ''}</label><textarea id="f__desc" name="f__desc" rows="3" placeholder="${ty.descReq ? 'Опишите проблему: что случилось, когда, что уже пробовали' : 'Необязательно'}">${esc(pre.desc || '')}</textarea><div class="err"></div></div>
+     <div class="row2"><div class="fld"><label for="f__prio">${t('priority')}</label><select id="f__prio" name="f__prio">${['low', 'normal', 'high', 'crit'].map(p => `<option value="${p}" ${(pre.priority || 'normal') === p ? 'selected' : ''}>${t('p_' + p)}</option>`).join('')}</select></div>
+     <div class="fld"><label for="f__files">Вложения</label><input type="file" id="f__files" name="f__files" multiple accept=".pdf,.docx,.xlsx,.jpg,.jpeg,.png"><div class="hint">До ${db.settings.maxFiles} файлов, до ${db.settings.maxMb} МБ: PDF, DOCX, XLSX, JPG, PNG</div><div class="err"></div></div></div>
+     <div class="row end" style="margin-top:8px">${r ? `<button type="button" class="btn ghost" onclick="A.delDraft('${r.id}')">Удалить черновик</button>` : ''}<button type="button" class="btn" onclick="A.saveDraft(true)">${t('draft')}</button><button class="btn accent big" type="submit">${t('send')} 🚀</button></div>
+   </form>
+   <aside class="stack">
+     <div class="card"><div class="row" style="flex-wrap:nowrap;align-items:flex-start">${mascot('think', 70)}<div class="bubble small">Поля со <span class="req">*</span> обязательны. ${ty.cat === 'HR' && ty.fields.some(f => f.t === 'period') ? 'Праздничные дни в отпуск не входят — я посчитаю дни сама.' : 'Чем подробнее описание, тем быстрее помогут.'}</div></div></div>
+     <div class="card"><h3>Как пойдёт заявка</h3><dl class="dl"><dt>Маршрут</dt><dd>${route}</dd><dt>SLA</dt><dd>${slaHuman(ty.sla)}</dd><dt>Автор</dt><dd>${esc(u.fio)}<div class="small muted">${esc(u.dept)}</div></dd></dl></div>
+     ${ty.fields.some(f => f.t === 'period') ? `<div class="card"><h3>Ближайшие праздники РК</h3><ul class="small" style="margin:0;padding-left:18px">${db.holidays.filter(h => h.d >= iso(new Date())).slice(0, 5).map(h => `<li><b>${fDate(h.d)}</b> — ${esc(h.n)}</li>`).join('') || '<li>До конца года праздников нет</li>'}</ul></div>` : ''}
+   </aside></div>`;
+}
+function bindForm() {
+  const f = document.getElementById('rf'); if (!f) return;
+  const ty = typeById(ui.form.type);
+  const upd = () => ty.fields.filter(x => x.t === 'period').forEach(x => {
+    const a = f.elements['f_' + x.k + '_from'].value, b = f.elements['f_' + x.k + '_to'].value, el = f.querySelector(`[data-days="${x.k}"]`);
+    if (a && b && a <= b) { const n = vacDays(a, b), hs = holidaysIn(a, b); el.innerHTML = `<b>${n} ${n % 10 === 1 && n % 100 !== 11 ? 'день' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20)) ? 'дня' : 'дней'}</b> (считается автоматически)${hs.length ? ` · праздники не учитываются: ${hs.map(h => fDate(h.d) + ' ' + esc(h.n)).join(', ')}` : ''}`; }
+    else el.textContent = a && b ? '' : 'Выберите даты «с» и «по»';
+  });
+  let tm; f.addEventListener('input', () => { upd(); clearTimeout(tm); tm = setTimeout(() => A.saveDraft(false), 900); });
+  f.addEventListener('change', upd); upd();
+}
+function collect(f, ty, strict) {
+  const data = {}, errs = {}, el = f.elements;
+  ty.fields.forEach(x => {
+    const id = 'f_' + x.k;
+    if (x.t === 'period') { const a = el[id + '_from'].value, b = el[id + '_to'].value; data[x.k] = a || b ? { from: a, to: b, days: vacDays(a, b) } : null; if (x.req && (!a || !b)) errs[id] = 'Укажите обе даты'; else if (a && b && a > b) errs[id] = 'Дата «по» раньше даты «с»'; }
+    else if (x.t === 'checkbox') data[x.k] = el[id].checked;
+    else if (x.t === 'file') { const fl = el[id].files[0]; const prev = ui.form.draft ? req(ui.form.draft)?.data?.[x.k] : ''; data[x.k] = fl ? fl.name : prev || ''; if (fl && (fl.size > db.settings.maxMb * 1048576 || !/\.(jpe?g|png|pdf)$/i.test(fl.name))) errs[id] = 'Только JPG, PNG, PDF до ' + db.settings.maxMb + ' МБ'; }
+    else { const v = el[id].value.trim(); data[x.k] = v; if (x.req && !v) errs[id] = 'Обязательное поле'; else if (x.t === 'number' && v && (+v < 1 || !Number.isFinite(+v))) errs[id] = 'Введите число не меньше 1'; }
+  });
+  const subject = el.f__subject.value.trim(), desc = el.f__desc.value.trim(), priority = el.f__prio.value;
+  if (!subject) errs.f__subject = 'Укажите тему';
+  if (ty.descReq && !desc) errs.f__desc = 'Опишите проблему';
+  const files = [...el.f__files.files].map(x => ({ name: x.name, size: x.size }));
+  if (files.length > db.settings.maxFiles) errs.f__files = 'Не больше ' + db.settings.maxFiles + ' файлов';
+  else if (files.some(x => x.size > db.settings.maxMb * 1048576)) errs.f__files = 'Файл больше ' + db.settings.maxMb + ' МБ';
+  else if (files.some(x => !/\.(pdf|docx|xlsx|jpe?g|png)$/i.test(x.name))) errs.f__files = 'Недопустимый тип файла';
+  if (strict) {
+    f.querySelectorAll('.fld').forEach(x => { x.classList.remove('bad'); const e = x.querySelector('.err'); if (e) e.textContent = ''; });
+    Object.entries(errs).forEach(([id, m]) => { const inp = el[id] || el[id + '_from']; const fl = inp && (inp.closest ? inp.closest('.fld') : null); if (fl) { fl.classList.add('bad'); fl.querySelector('.err').textContent = m; } });
+  }
+  return { data, subject, desc, priority, files, errs };
+}
+
+/* ---------- views: my requests & card ---------- */
+function viewMy(u) {
+  const f = ui.my;
+  let list = db.reqs.filter(r => r.author === u.id);
+  if (f.status) list = list.filter(r => r.status === f.status);
+  if (f.cat) list = list.filter(r => deptOf(r) === f.cat);
+  if (f.from) list = list.filter(r => r.created >= new Date(f.from + 'T00:00').getTime());
+  if (f.to) list = list.filter(r => r.created <= new Date(f.to + 'T23:59').getTime());
+  if (f.q) { const s = f.q.toLowerCase(); list = list.filter(r => r.num.toLowerCase().includes(s) || r.subject.toLowerCase().includes(s)); }
+  list.sort((a, b) => b.updated - a.updated);
+  return `<div class="sec-title"><h1>${t('my')}</h1><a class="btn accent" href="#/catalog">＋ ${t('create')}</a></div>
+   <div class="filters">
+     <div><label for="mq">${t('search')} по номеру</label><input id="mq" type="search" value="${esc(f.q || '')}" placeholder="АНПЗ-2026-…" oninput="A.f('my','q',this.value)"></div>
+     <div><label for="ms">${t('status')}</label><select id="ms" onchange="A.f('my','status',this.value)"><option value="">${t('all')}</option>${Object.keys(ST).map(s => `<option value="${s}" ${f.status === s ? 'selected' : ''}>${t('st_' + s)}</option>`).join('')}</select></div>
+     <div><label for="mc">${t('category')}</label><select id="mc" onchange="A.f('my','cat',this.value)"><option value="">${t('all')}</option>${db.cats.map(c => `<option value="${c.id}" ${f.cat === c.id ? 'selected' : ''}>${esc(catName(c))}</option>`).join('')}</select></div>
+     <div><label for="mf">${t('period')}: с</label><input id="mf" type="date" value="${esc(f.from || '')}" onchange="A.f('my','from',this.value)"></div>
+     <div><label for="mt">по</label><input id="mt" type="date" value="${esc(f.to || '')}" onchange="A.f('my','to',this.value)"></div>
+   </div>
+   ${reqTable(list, ['num', 'subj', 'status', 'assignee', 'sla', 'created'], Object.values(f).some(Boolean) ? 'Ничего не нашлось — попробуйте изменить фильтры' : t('empty'))}`;
+}
+function fmtVal(f, v) {
+  if (v == null || v === '') return '<span class="muted">—</span>';
+  if (f.t === 'period') return v.from ? `${fDate(v.from)} — ${fDate(v.to)}${v.days ? ` <span class="chip">${v.days} дн.</span>` : ''}` : '—';
+  if (f.t === 'checkbox') return v ? 'Да' : 'Нет';
+  if (f.t === 'date') return fDate(v);
+  if (f.t === 'file') return `<span class="file">📎 ${esc(v)}</span>`;
+  return esc(v);
+}
+function stepper(r) {
+  const ty = typeOf(r), seen = new Set(r.hist.map(h => h.to));
+  let path = ['new', ...(ty.approval || seen.has('approval') ? ['approval'] : []), 'work', ...(seen.has('waiting') ? ['waiting'] : []), 'done', 'closed'];
+  if (ty.approval || seen.has('approval')) path = ['approval', 'new', 'work', ...(seen.has('waiting') ? ['waiting'] : []), 'done', 'closed'];
+  const end = ['rejected', 'cancelled'].includes(r.status);
+  const ci = path.indexOf(r.status);
+  return `<div class="steps">${path.map((s, i) => `${i ? '<span class="arrow">→</span>' : ''}<span class="step ${s === r.status ? 'cur' : (seen.has(s) && (ci < 0 || i < ci) ? 'done' : '')}">${t('st_' + s)}</span>`).join('')}${end ? `<span class="arrow">→</span><span class="step bad">${t('st_' + r.status)}</span>` : ''}</div>`;
+}
+function viewCard(u, id) {
+  const r = req(id); if (!r) return view404();
+  need(canView(u, r));
+  if (r.status === 'draft') { location.replace('#/edit/' + r.id); return ''; }
+  const ty = typeOf(r), c = catById(ty.cat), a = user(r.author);
+  const proc = canProcess(u, r), head = isHeadOf(u, r), author = r.author === u.id;
+  const comments = r.comments.filter(x => !x.internal || proc);
+  const acts = [];
+  if (head && r.status === 'approval') acts.push(`<button class="btn ok" onclick="A.approve('${r.id}')">✓ ${t('approve')}</button><button class="btn danger" onclick="A.reject('${r.id}')">✕ ${t('reject')}</button>`);
+  if (proc && r.status === 'new') acts.push(`<button class="btn primary" onclick="A.take('${r.id}')">${t('take')}</button><button class="btn" onclick="A.assign('${r.id}')">Назначить коллегу</button><button class="btn danger" onclick="A.reject('${r.id}')">${t('reject')}</button>`);
+  if (proc && r.status === 'work') acts.push(`<button class="btn ok" onclick="A.done('${r.id}')">✓ Выполнена</button><button class="btn" onclick="A.waiting('${r.id}')">Запросить у автора</button><button class="btn" onclick="A.assign('${r.id}')">Переназначить</button><button class="btn danger" onclick="A.reject('${r.id}')">${t('reject')}</button>`);
+  if (proc && r.status === 'waiting') acts.push(`<button class="btn primary" onclick="A.resume('${r.id}')">Вернуть в работу</button><button class="btn ok" onclick="A.done('${r.id}')">✓ Выполнена</button>`);
+  if (author && ['new', 'approval'].includes(r.status) && !r.assignee) acts.push(`<button class="btn danger" onclick="A.cancel('${r.id}')">${t('cancel')}</button>`);
+  if (author) acts.push(`<a class="btn" href="#/new/${r.type}?from=${r.id}">↻ Повторить заявку</a>`);
+  const canReopen = author && r.status === 'done';
+  const rateBox = canReopen ? `<div class="card" style="background:var(--chip)"><div class="row" style="flex-wrap:nowrap;align-items:flex-start">${mascot('happy', 70)}<div style="flex:1"><h3>Заявка выполнена! Оцените работу</h3>
+      <form onsubmit="return A.rate(event,'${r.id}')"><div class="stars" role="radiogroup" aria-label="Оценка">${[5, 4, 3, 2, 1].map(n => `<input type="radio" name="rate" id="rt${n}" value="${n}"><label for="rt${n}" title="${n}">★</label>`).join('')}</div>
+      <div class="fld" style="margin-top:8px"><label for="rv">Отзыв</label><textarea id="rv" name="review" rows="2" placeholder="Что понравилось, что улучшить?"></textarea></div>
+      <div class="row"><button class="btn accent">Закрыть с оценкой</button><button type="button" class="btn" onclick="A.reopen('${r.id}')">Вернуть в работу</button></div>
+      <p class="small muted" style="margin-top:6px">Без оценки заявка закроется автоматически ${fdt(r.doneAt + 3 * D)}.</p></form></div></div></div>` : '';
+  const canChat = !['closed', 'cancelled', 'rejected'].includes(r.status) && (author || proc || head);
+  const histList = r.hist.slice().reverse().map(h => `<li><b>${h.from ? t('st_' + h.from) + ' → ' : ''}${t('st_' + h.to)}</b><div class="muted">${esc(user(h.user).fio)} · ${fdt(h.t)}</div>${h.note ? `<div>«${esc(h.note)}»</div>` : ''}</li>`).join('');
+  const em = { new: 'think', approval: 'think', work: 'work', waiting: 'think', done: 'happy', closed: 'happy', rejected: 'sad', cancelled: 'sleep' }[r.status];
+  return `<div class="crumbs"><a href="#/${author ? 'my' : proc ? 'queue' : 'approvals'}">${author ? t('my') : proc ? t('queue') : t('approvals')}</a> / ${r.num}</div>
+   <div class="card" style="margin-bottom:18px"><div class="row" style="align-items:flex-start;flex-wrap:nowrap">${mascot(em, 74)}<div style="flex:1;min-width:0">
+     <div class="row small muted" style="gap:8px"><span class="num"><b>${r.num}</b></span>·<span>${esc(catName(c))} / ${esc(ty.name)}</span></div>
+     <h1 style="margin:4px 0 8px">${esc(r.subject)}</h1>
+     <div class="row">${badge(r.status)} ${prBadge(r.priority)} ${slaTag(r)} <span class="small muted">срок: ${fdt(r.deadline)}</span></div>
+     ${stepper(r)}</div></div>
+     ${acts.length ? `<div class="row" style="margin-top:14px">${acts.join('')}</div>` : ''}</div>
+   ${rateBox ? `<div style="margin-bottom:18px">${rateBox}</div>` : ''}
+   <div class="grid2"><div class="stack">
+     <div class="card"><h3>Данные заявки</h3><dl class="dl">
+       <dt>${t('author')}</dt><dd>${esc(a.fio)}<div class="small muted">${esc(a.pos)} · ${esc(a.dept)}</div></dd>
+       ${ty.fields.map(f => `<dt>${esc(f.l)}</dt><dd>${fmtVal(f, r.data[f.k])}</dd>`).join('')}
+       ${r.desc ? `<dt>Описание</dt><dd style="white-space:pre-wrap">${esc(r.desc)}</dd>` : ''}
+       <dt>${t('assignee')}</dt><dd>${r.assignee ? esc(user(r.assignee).fio) : '<span class="muted">не назначен</span>'}</dd>
+       <dt>${t('created')}</dt><dd>${fdt(r.created)}</dd><dt>Изменена</dt><dd>${fdt(r.updated)}</dd>
+       ${r.rating ? `<dt>Оценка</dt><dd><span class="rate-show">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>${r.review ? `<div class="small">«${esc(r.review)}»</div>` : ''}</dd>` : ''}
+       ${r.files.length ? `<dt>Вложения</dt><dd>${r.files.map(x => `<span class="file">📎 ${esc(x.name)} · ${fmtSize(x.size)}</span>`).join('')}</dd>` : ''}
+     </dl>
+     ${r.approvals.length ? `<h3 style="margin-top:14px">Согласование</h3>${r.approvals.map(x => `<div class="small"><b>${x.dec === 'approved' ? '✓ Согласовано' : '✕ Отклонено'}</b> — ${esc(user(x.by).fio)} (${esc(x.step)}), ${fdt(x.t)}${x.comment ? ': «' + esc(x.comment) + '»' : ''}</div>`).join('')}` : ''}</div>
+     <div class="card"><h3>Переписка${proc ? ' <span class="small muted">· внутренние комментарии видны только исполнителям</span>' : ''}</h3>
+       <div class="chat" id="chat">${comments.length ? comments.map(x => `<div class="msg ${x.user === u.id ? 'mine' : ''} ${x.internal ? 'int' : ''}"><div class="who"><span>${esc(shortName(user(x.user).fio))}${x.internal ? ' · 🔒 внутренний' : ''}</span><span class="muted">${fdt(x.t)}</span></div><div style="white-space:pre-wrap">${esc(x.text)}</div>${(x.files || []).map(fl => `<span class="file">📎 ${esc(fl.name)}</span>`).join('')}</div>`).join('') : '<p class="muted small">Сообщений пока нет</p>'}</div>
+       ${canChat ? `<form onsubmit="return A.comment(event,'${r.id}')" style="margin-top:12px">
+         ${proc ? `<select aria-label="Шаблон ответа" onchange="if(this.value){const t=document.getElementById('cmt');t.value=this.value+(t.value?'\\n'+t.value:'');t.focus();this.value=''}" style="margin-bottom:8px"><option value="">Вставить шаблон ответа…</option>${db.replies.map(x => `<option>${esc(x)}</option>`).join('')}</select>` : ''}
+         <textarea id="cmt" name="text" rows="2" placeholder="${r.status === 'waiting' && author ? 'Ответьте исполнителю — заявка вернётся в работу' : 'Написать сообщение…'}" aria-label="Сообщение"></textarea>
+         <div class="row" style="margin-top:8px"><input type="file" name="files" multiple style="flex:1;min-width:180px" aria-label="Прикрепить файл">${proc ? '<label class="chk small"><input type="checkbox" name="internal"> внутренний</label>' : ''}<button class="btn primary">Отправить</button></div></form>` : ''}
+     </div></div>
+     <aside class="card"><h3>История</h3><ul class="hist">${histList}</ul></aside></div>`;
+}
+
+/* ---------- views: head ---------- */
+function viewApprovals(u) {
+  const list = db.reqs.filter(r => r.status === 'approval' && isHeadOf(u, r)).sort((a, b) => a.created - b.created);
+  const done = db.reqs.filter(r => r.approvals.some(x => x.by === u.id)).sort((a, b) => b.updated - a.updated).slice(0, 8);
+  return `<div class="sec-title"><h1>${t('approvals')}</h1>${list.length ? `<div class="row"><button class="btn ok" onclick="A.bulk()">✓ Согласовать выбранные</button></div>` : ''}</div>
+   ${list.length ? `<div class="tw"><table class="tbl"><thead><tr><th><input type="checkbox" aria-label="Выбрать все" onchange="document.querySelectorAll('.bsel').forEach(x=>x.checked=this.checked)"></th><th>${t('number')}</th><th>Сотрудник</th><th>Заявка</th><th>Детали</th><th>SLA</th><th></th></tr></thead><tbody>
+   ${list.map(r => { const ty = typeOf(r), p = r.data.period; return `<tr><td><input type="checkbox" class="bsel" value="${r.id}" aria-label="Выбрать ${r.num}"></td><td class="num"><a href="#/r/${r.id}">${r.num}</a></td><td>${esc(user(r.author).fio)}</td><td><b>${esc(ty.name)}</b></td><td class="small">${p ? `${fDate(p.from)} — ${fDate(p.to)} · ${p.days} дн.` : esc(Object.values(r.data).filter(v => typeof v === 'string').slice(0, 2).join(' · '))}</td><td>${slaTag(r)}</td><td><div class="row" style="flex-wrap:nowrap"><button class="btn sm ok" onclick="A.approve('${r.id}')">${t('approve')}</button><button class="btn sm danger" onclick="A.reject('${r.id}')">${t('reject')}</button></div></td></tr>`; }).join('')}
+   </tbody></table></div>` : `<div class="card">${emptyState('Все заявки согласованы — можно выпить чаю!', 'happy')}</div>`}
+   ${done.length ? `<h2 style="margin-top:28px">Недавние решения</h2>${reqTable(done, ['num', 'subj', 'author', 'status', 'created'])}` : ''}`;
+}
+function viewVacations(u) {
+  const base = new Date(); base.setDate(1); base.setMonth(base.getMonth() + ui.vm);
+  const y = base.getFullYear(), m = base.getMonth(), n = new Date(y, m + 1, 0).getDate();
+  const team = has(u, 'admin') && !has(u, 'head') ? db.users.filter(x => x.active) : db.users.filter(x => x.manager === u.id || x.id === u.id);
+  const vreqs = db.reqs.filter(r => ['hr_vac', 'hr_unpaid', 'hr_move'].includes(r.type) && ['approval', 'new', 'work', 'waiting', 'done', 'closed'].includes(r.status) && r.data.period);
+  const days = [...Array(n)].map((_, i) => iso(new Date(y, m, i + 1)));
+  const onV = (uid, d) => { const r = vreqs.find(r => r.author === uid && r.data.period.from <= d && r.data.period.to >= d); return r ? (r.status === 'approval' ? 'v2' : 'v1') : ''; };
+  const clash = days.map(d => team.filter(x => onV(x.id, d)).length > 1);
+  return `<div class="sec-title"><h1>${t('vacations')}</h1><div class="row"><button class="btn sm" onclick="A.vm(-1)" aria-label="Предыдущий месяц">←</button><b style="min-width:140px;text-align:center">${base.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })}</b><button class="btn sm" onclick="A.vm(1)" aria-label="Следующий месяц">→</button></div></div>
+   <div class="tw"><table class="tbl vac"><thead><tr><th class="name">Сотрудник</th>${days.map((d, i) => { const dt = new Date(d + 'T00:00'), we = dt.getDay() % 6 === 0, hol = isHoliday(dt); return `<th class="${clash[i] ? 'clash' : hol ? 'hol' : we ? 'we' : ''}" title="${hol ? esc(db.holidays.find(h => h.d === d).n) : ''}">${i + 1}</th>`; }).join('')}</tr></thead>
+   <tbody>${team.map(x => `<tr><td class="name"><b>${esc(shortName(x.fio))}</b></td>${days.map(d => { const dt = new Date(d + 'T00:00'); return `<td class="${onV(x.id, d) || (isHoliday(dt) ? 'hol' : dt.getDay() % 6 === 0 ? 'we' : '')}"></td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
+   <div class="legend"><span><i style="background:var(--blue)"></i>Отпуск согласован</span><span><i style="background:repeating-linear-gradient(45deg,var(--blue) 0 4px,transparent 4px 8px)"></i>На согласовании</span><span><i style="background:var(--red)"></i>Пересечение отпусков</span><span><i style="background:#FFE3B3"></i>Праздник</span><span><i style="background:var(--soft)"></i>Выходной</span></div>
+   ${clash.some(Boolean) ? `<div class="card" style="margin-top:16px;background:#F9CACA;color:#1E2A44"><div class="row">${mascot('think', 50, 'still')}<b>Внимание: в этом месяце отпуска сотрудников пересекаются (${clash.filter(Boolean).length} дн.). Проверьте, кто будет замещать.</b></div></div>` : ''}`;
+}
+
+/* ---------- views: manager ---------- */
+function viewQueue(u) {
+  const f = ui.q, admin = has(u, 'admin') && !has(u, 'manager');
+  let list = db.reqs.filter(r => (admin || isMgrOf(u, r)) && !['draft', 'approval'].includes(r.status));
+  if (!f.showClosed) list = list.filter(r => ['new', 'work', 'waiting', 'done'].includes(r.status));
+  if (f.cat) list = list.filter(r => deptOf(r) === f.cat);
+  if (f.type) list = list.filter(r => r.type === f.type);
+  if (f.prio) list = list.filter(r => r.priority === f.prio);
+  if (f.who === 'me') list = list.filter(r => r.assignee === u.id); else if (f.who === 'none') list = list.filter(r => !r.assignee); else if (f.who) list = list.filter(r => r.assignee === f.who);
+  if (f.over) list = list.filter(r => sla(r).over);
+  if (f.q) { const s = f.q.toLowerCase(); list = list.filter(r => (r.num + ' ' + r.subject + ' ' + user(r.author).fio).toLowerCase().includes(s)); }
+  const po = { crit: 0, high: 1, normal: 2, low: 3 };
+  list.sort((a, b) => (sla(b).over - sla(a).over) || (po[a.priority] - po[b.priority]) || a.deadline - b.deadline);
+  const types = db.types.filter(x => admin ? (!f.cat || x.cat === f.cat) : x.cat === u.mdept);
+  const staff = db.users.filter(x => has(x, 'manager') && (admin || x.mdept === u.mdept));
+  const view = db.ui.qview;
+  if (view === 'kanban') post.push(bindKanban);
+  return `<div class="sec-title"><h1>${t('queue')}${admin ? '' : ' · ' + deptName(u.mdept)}</h1><div class="seg" role="tablist"><button class="${view === 'table' ? 'on' : ''}" onclick="A.qview('table')">Таблица</button><button class="${view === 'kanban' ? 'on' : ''}" onclick="A.qview('kanban')">Канбан</button></div></div>
+   <div class="filters">
+     <div><label for="qq">${t('search')}</label><input id="qq" type="search" value="${esc(f.q || '')}" placeholder="номер, тема, автор" oninput="A.f('q','q',this.value)"></div>
+     ${admin ? `<div><label for="qc">${t('category')}</label><select id="qc" onchange="A.f('q','cat',this.value)"><option value="">${t('all')}</option>${db.cats.map(c => `<option value="${c.id}" ${f.cat === c.id ? 'selected' : ''}>${esc(catName(c))}</option>`).join('')}</select></div>` : ''}
+     <div><label for="qt">Тип заявки</label><select id="qt" onchange="A.f('q','type',this.value)"><option value="">${t('all')}</option>${types.map(x => `<option value="${x.id}" ${f.type === x.id ? 'selected' : ''}>${esc(x.name)}</option>`).join('')}</select></div>
+     <div><label for="qp">${t('priority')}</label><select id="qp" onchange="A.f('q','prio',this.value)"><option value="">${t('all')}</option>${['crit', 'high', 'normal', 'low'].map(p => `<option value="${p}" ${f.prio === p ? 'selected' : ''}>${t('p_' + p)}</option>`).join('')}</select></div>
+     <div><label for="qw">${t('assignee')}</label><select id="qw" onchange="A.f('q','who',this.value)"><option value="">${t('all')}</option><option value="me" ${f.who === 'me' ? 'selected' : ''}>Мои</option><option value="none" ${f.who === 'none' ? 'selected' : ''}>Не назначены</option>${staff.map(x => `<option value="${x.id}" ${f.who === x.id ? 'selected' : ''}>${esc(shortName(x.fio))}</option>`).join('')}</select></div>
+     <div style="flex:0 0 auto"><label class="chk small"><input type="checkbox" ${f.over ? 'checked' : ''} onchange="A.f('q','over',this.checked)"> только просроченные</label><label class="chk small"><input type="checkbox" ${f.showClosed ? 'checked' : ''} onchange="A.f('q','showClosed',this.checked)"> с закрытыми</label></div>
+   </div>
+   ${view === 'table' ? reqTable(list, ['num', 'subj', 'author', 'prio', 'status', 'assignee', 'sla'], 'Очередь пуста — отдыхаем!') : kanban(list)}`;
+}
+function kanban(list) {
+  const cols = ['new', 'work', 'waiting', 'done'];
+  return `<p class="small muted">Перетащите карточку в другую колонку, чтобы сменить статус.</p><div class="kan">${cols.map(s => { const items = list.filter(r => r.status === s); return `<div class="col" data-s="${s}"><h3><span>${badge(s)}</span><span>${items.length}</span></h3>${items.map(r => `<div class="kcard ${sla(r).over ? 'over' : ''}" draggable="true" data-id="${r.id}"><a href="#/r/${r.id}">${r.num}</a><div style="font-weight:800;margin:3px 0">${esc(r.subject)}</div><div class="small muted">${esc(shortName(user(r.author).fio))}${r.assignee ? ' → ' + esc(shortName(user(r.assignee).fio)) : ''}</div><div class="row" style="margin-top:6px;gap:6px">${prBadge(r.priority)} ${slaTag(r)}</div></div>`).join('') || '<p class="small muted" style="text-align:center">пусто</p>'}</div>`; }).join('')}</div>`;
+}
+function bindKanban() {
+  document.querySelectorAll('.kcard').forEach(c => c.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', c.dataset.id); e.dataTransfer.effectAllowed = 'move'; }));
+  document.querySelectorAll('.col').forEach(col => {
+    col.addEventListener('dragover', e => { e.preventDefault(); col.classList.add('over'); });
+    col.addEventListener('dragleave', () => col.classList.remove('over'));
+    col.addEventListener('drop', e => { e.preventDefault(); col.classList.remove('over'); A.move(e.dataTransfer.getData('text/plain'), col.dataset.s); });
+  });
+}
+function stat(v, l, color) { return `<div class="card stat"><div class="v" style="${color ? 'color:' + color : ''}">${v}</div><div class="l">${l}</div></div>`; }
+function viewDash(u) {
+  const mine = db.reqs.filter(r => isMgrOf(u, r));
+  const inWork = mine.filter(r => r.assignee === u.id && ['work', 'waiting'].includes(r.status));
+  const over = mine.filter(r => sla(r).over);
+  const done30 = mine.filter(r => r.assignee === u.id && r.doneAt && Date.now() - r.doneAt < 30 * D);
+  const rated = mine.filter(r => r.assignee === u.id && r.rating);
+  const avg = rated.length ? (rated.reduce((s, r) => s + r.rating, 0) / rated.length).toFixed(1) : '—';
+  return `<div class="sec-title"><h1>${t('dash')}</h1><span class="chip">${deptName(u.mdept)}</span></div>
+   <div class="tiles" style="margin-bottom:22px">${stat(inWork.length, 'Мои заявки в работе')}${stat(over.length, 'Просрочено в отделе', over.length ? 'var(--red)' : '')}${stat(done30.length, 'Выполнено мной за 30 дней', 'var(--green)')}${stat(avg + (rated.length ? ' ★' : ''), 'Средняя оценка (' + rated.length + ')', 'var(--orange)')}</div>
+   <div class="grid2"><section><h2>В работе у меня</h2>${reqTable(inWork, ['num', 'subj', 'status', 'sla'], 'Нет заявок в работе')}</section>
+   <section><h2>Просроченные</h2>${over.length ? reqTable(over, ['num', 'subj', 'sla']) : `<div class="card">${emptyState('Просрочек нет — так держать!', 'happy')}</div>`}</section></div>`;
+}
+
+/* ---------- views: admin ---------- */
+function viewUsers(u) {
+  const s = (ui.us || '').toLowerCase();
+  const list = db.users.filter(x => !s || (x.fio + ' ' + x.login + ' ' + x.dept + ' ' + x.pos).toLowerCase().includes(s));
+  return `<div class="sec-title"><h1>${t('users')}</h1><span class="small muted">Синхронизация с AD: ежедневно в 03:00 и при входе</span></div>
+   <div class="filters"><div style="max-width:360px;flex-basis:360px"><label for="us">${t('search')}</label><input id="us" type="search" value="${esc(ui.us || '')}" placeholder="ФИО, логин, подразделение" oninput="ui.us=this.value;render()"></div></div>
+   <div class="tw"><table class="tbl"><thead><tr><th>Сотрудник</th><th>Логин AD</th><th>Подразделение</th><th>Руководитель</th><th>Роли</th><th>Отдел-исполнитель</th><th>Статус</th></tr></thead><tbody>
+   ${list.map(x => `<tr style="${x.active ? '' : 'opacity:.55'}"><td><b>${esc(x.fio)}</b><div class="small muted">${esc(x.pos)} · таб. ${esc(x.tab)}</div></td><td class="num small">${esc(x.login)}</td><td class="small">${esc(x.dept)}</td><td class="small">${x.manager ? esc(shortName(user(x.manager).fio)) : '—'}</td>
+     <td><div class="chips">${['employee', 'head', 'manager', 'admin'].map(r => `<label class="chk small" style="gap:4px"><input type="checkbox" ${x.roles.includes(r) ? 'checked' : ''} ${r === 'employee' ? 'disabled' : ''} onchange="A.role('${x.id}','${r}',this.checked)">${roleName(r)}</label>`).join('')}</div></td>
+     <td>${x.roles.includes('manager') ? `<select onchange="A.mdept('${x.id}',this.value)" aria-label="Отдел">${db.cats.map(c => `<option value="${c.id}" ${x.mdept === c.id ? 'selected' : ''}>${deptName(c.id)}</option>`).join('')}</select>` : '<span class="muted">—</span>'}</td>
+     <td><button class="btn sm ${x.active ? '' : 'ok'}" onclick="A.active('${x.id}')" ${x.id === u.id ? 'disabled' : ''}>${x.active ? 'Заблокировать' : 'Разблокировать'}</button></td></tr>`).join('')}
+   </tbody></table></div>`;
+}
+function viewBuilder(u) {
+  if (!ui.b) ui.b = { name: '', cat: 'HR', sla: 8, approval: false, descReq: false, fields: [{ l: '', t: 'text', req: true, opt: '' }] };
+  const b = ui.b, FT = { text: 'Текст', textarea: 'Многострочный текст', number: 'Число', date: 'Дата', period: 'Период', select: 'Список', dict: 'Справочник', file: 'Файл', checkbox: 'Флажок', time: 'Время' };
+  return `<div class="sec-title"><h1>Конструктор каталога</h1><span class="small muted">Изменения сразу видны в каталоге — без программиста</span></div>
+   <div class="grid2"><div class="stack">${db.cats.map(c => `<div class="card"><div class="row" style="margin-bottom:10px">${catIcon(c.icon, 36)}<h2 style="margin:0;flex:1">${esc(c.ru)}</h2><span class="chip">исполнитель: ${deptName(c.id)}</span></div>
+     <div class="tw"><table class="tbl"><thead><tr><th>Тип заявки</th><th>Поля</th><th>SLA, ч</th><th>Согласование</th><th>Активна</th></tr></thead><tbody>
+     ${db.types.filter(x => x.cat === c.id).map(x => `<tr><td><b>${esc(x.name)}</b></td><td class="small muted">${x.fields.length}</td><td><input type="number" min="1" value="${x.sla}" style="width:72px" onchange="A.typeSet('${x.id}','sla',+this.value)" aria-label="SLA"></td><td><input type="checkbox" ${x.approval ? 'checked' : ''} onchange="A.typeSet('${x.id}','approval',this.checked)" aria-label="Согласование"></td><td><input type="checkbox" ${x.active ? 'checked' : ''} onchange="A.typeSet('${x.id}','active',this.checked)" aria-label="Активна"></td></tr>`).join('')}
+     </tbody></table></div></div>`).join('')}</div>
+   <aside class="card" style="position:sticky;top:90px"><h2>Новый тип заявки</h2>
+     <div class="fld"><label for="bn">Название <span class="req">*</span></label><input id="bn" value="${esc(b.name)}" oninput="ui.b.name=this.value" placeholder="Например: Ремонт кондиционера"></div>
+     <div class="row2"><div class="fld"><label for="bc">Категория</label><select id="bc" onchange="ui.b.cat=this.value">${db.cats.map(c => `<option value="${c.id}" ${b.cat === c.id ? 'selected' : ''}>${esc(c.ru)}</option>`).join('')}</select></div>
+     <div class="fld"><label for="bs">SLA, рабочих часов</label><input id="bs" type="number" min="1" value="${b.sla}" oninput="ui.b.sla=+this.value"></div></div>
+     <label class="chk"><input type="checkbox" ${b.approval ? 'checked' : ''} onchange="ui.b.approval=this.checked"> Согласование руководителем</label>
+     <label class="chk" style="margin:6px 0 14px"><input type="checkbox" ${b.descReq ? 'checked' : ''} onchange="ui.b.descReq=this.checked"> Описание обязательно</label>
+     <h3>Поля формы</h3>
+     ${b.fields.map((f, i) => `<div class="fbuild"><input value="${esc(f.l)}" placeholder="Подпись поля" oninput="ui.b.fields[${i}].l=this.value" aria-label="Подпись поля ${i + 1}">
+       <select onchange="ui.b.fields[${i}].t=this.value;render()" aria-label="Тип поля ${i + 1}">${Object.entries(FT).map(([k, v]) => `<option value="${k}" ${f.t === k ? 'selected' : ''}>${v}</option>`).join('')}</select>
+       ${f.t === 'select' ? `<input value="${esc(f.opt)}" placeholder="Варианты через запятую" oninput="ui.b.fields[${i}].opt=this.value" aria-label="Варианты">` : f.t === 'dict' ? `<select onchange="ui.b.fields[${i}].opt=this.value" aria-label="Справочник">${Object.keys(db.dicts).map(k => `<option ${f.opt === k ? 'selected' : ''}>${k}</option>`).join('')}</select>` : '<span></span>'}
+       <label class="chk small" title="Обязательное"><input type="checkbox" ${f.req ? 'checked' : ''} onchange="ui.b.fields[${i}].req=this.checked">обяз.</label>
+       <button class="btn sm ghost" onclick="ui.b.fields.splice(${i},1);render()" aria-label="Удалить поле">✕</button></div>`).join('')}
+     <div class="row between" style="margin-top:10px"><button class="btn sm" onclick="ui.b.fields.push({l:'',t:'text',req:false,opt:''});render()">＋ Поле</button><button class="btn accent" onclick="A.saveType()">Создать тип заявки</button></div>
+   </aside></div>`;
+}
+function viewDicts(u) {
+  const names = { departments: 'Подразделения', buildings: 'Здания и кабинеты', stationery: 'Канцелярия', siz: 'СИЗ и спецодежда', systems: 'Системы для доступа' };
+  return `<div class="sec-title"><h1>${t('dicts')}</h1><span class="small muted">Одна позиция — одна строка</span></div>
+   <div class="grid3">${Object.keys(db.dicts).map(k => `<div class="card"><h3>${names[k] || k}</h3><textarea id="d_${k}" rows="8" aria-label="${names[k] || k}">${esc(db.dicts[k].join('\n'))}</textarea><div class="row end" style="margin-top:8px"><span class="small muted sp">${db.dicts[k].length} поз.</span><button class="btn sm primary" onclick="A.dictSave('${k}')">Сохранить</button></div></div>`).join('')}</div>`;
+}
+function analyticsData() {
+  const since = ui.an === '30' ? Date.now() - 30 * D : ui.an === '7' ? Date.now() - 7 * D : 0;
+  const list = db.reqs.filter(r => r.status !== 'draft' && r.created >= since);
+  const fin = list.filter(r => r.doneAt);
+  const onTime = fin.filter(r => r.doneAt <= r.deadline).length;
+  const avgH = fin.length ? fin.reduce((s, r) => s + workHoursBetween(r.created, r.doneAt), 0) / fin.length : 0;
+  const rated = list.filter(r => r.rating);
+  const csat = rated.length ? rated.reduce((s, r) => s + r.rating, 0) / rated.length : 0;
+  const by = (fn) => { const m = {}; list.forEach(r => { const k = fn(r); if (k) m[k] = (m[k] || 0) + 1; }); return Object.entries(m).sort((a, b) => b[1] - a[1]); };
+  return { list, fin, onTime, avgH, rated, csat, byCat: by(r => catById(deptOf(r))?.ru), byDept: by(r => user(r.author).dept), byStatus: by(r => I18N.ru['st_' + r.status]), byAssignee: by(r => r.assignee && ['work', 'waiting'].includes(r.status) ? user(r.assignee).fio : null), byType: by(r => typeOf(r)?.name) };
+}
+function bars(rows, cls = '') { const max = Math.max(1, ...rows.map(r => r[1])); return rows.length ? `<div class="bars">${rows.map(([k, v]) => `<div class="bar-row"><span title="${esc(k)}" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(k)}</span><div class="bar-track"><div class="bar-fill ${cls}" style="width:${v / max * 100}%"></div></div><b class="num">${v}</b></div>`).join('')}</div>` : '<p class="muted small">Нет данных</p>'; }
+function viewAnalytics(u) {
+  const a = analyticsData(), pct = a.fin.length ? Math.round(a.onTime / a.fin.length * 100) : 0;
+  return `<div class="sec-title"><h1>${t('analytics')}</h1><div class="row"><div class="seg">${[['all', 'Всё время'], ['30', '30 дней'], ['7', '7 дней']].map(([k, l]) => `<button class="${ui.an === k ? 'on' : ''}" onclick="ui.an='${k}';render()">${l}</button>`).join('')}</div><button class="btn sm accent" onclick="A.exportAn()">⬇ Экспорт в Excel</button></div></div>
+   <div class="tiles" style="margin-bottom:20px">${stat(a.list.length, 'Всего заявок')}${stat(pct + '%', '% выполнено в срок (' + a.onTime + ' из ' + a.fin.length + ')', pct >= 90 ? 'var(--green)' : 'var(--red)')}${stat(a.avgH.toFixed(1) + ' ч', 'Среднее время выполнения (раб. часы)')}${stat(a.csat ? a.csat.toFixed(2) + ' ★' : '—', 'CSAT (' + a.rated.length + ' оценок), цель ≥ 4,3', a.csat >= 4.3 ? 'var(--green)' : 'var(--orange)')}</div>
+   <div class="grid2"><div class="card"><h3>Заявки по категориям</h3>${bars(a.byCat)}</div><div class="card"><h3>По статусам</h3>${bars(a.byStatus, 'o')}</div>
+   <div class="card"><h3>По подразделениям авторов</h3>${bars(a.byDept, 'g')}</div><div class="card"><h3>Нагрузка на исполнителей (в работе)</h3>${bars(a.byAssignee, 'o')}</div></div>
+   <div class="card" style="margin-top:20px"><h3>Популярные услуги</h3>${bars(a.byType.slice(0, 8))}</div>`;
+}
+function viewAudit(u) {
+  const f = ui.aud;
+  let list = db.audit;
+  if (f.user) list = list.filter(x => x.user === f.user);
+  if (f.q) { const s = f.q.toLowerCase(); list = list.filter(x => (x.action + ' ' + x.old + ' ' + x.new + ' ' + (req(x.eid)?.num || x.eid)).toLowerCase().includes(s)); }
+  return `<div class="sec-title"><h1>Журнал аудита</h1><button class="btn sm accent" onclick="A.exportAudit()">⬇ Экспорт</button></div>
+   <div class="filters"><div><label for="aq">${t('search')}</label><input id="aq" type="search" value="${esc(f.q || '')}" placeholder="действие, номер заявки" oninput="A.f('aud','q',this.value)"></div>
+   <div><label for="au">Пользователь</label><select id="au" onchange="A.f('aud','user',this.value)"><option value="">${t('all')}</option><option value="system" ${f.user === 'system' ? 'selected' : ''}>Система</option>${db.users.map(x => `<option value="${x.id}" ${f.user === x.id ? 'selected' : ''}>${esc(x.fio)}</option>`).join('')}</select></div></div>
+   <div class="tw"><table class="tbl"><thead><tr><th>Дата</th><th>Кто</th><th>Объект</th><th>Действие</th><th>Было</th><th>Стало</th><th>IP</th></tr></thead><tbody>
+   ${list.slice(0, 300).map(x => { const r = x.ent === 'Request' ? req(x.eid) : null; return `<tr><td class="num small">${fdt(x.t)}</td><td class="small">${esc(user(x.user).fio)}</td><td class="small">${r ? `<a href="#/r/${r.id}">${r.num}</a>` : esc(x.ent + (x.eid ? ' · ' + x.eid : ''))}</td><td class="small"><b>${esc(x.action)}</b></td><td class="small muted">${esc(x.old)}</td><td class="small">${esc(x.new)}</td><td class="num small muted">${esc(x.ip)}</td></tr>`; }).join('') || '<tr><td colspan="7" class="muted">Нет записей</td></tr>'}
+   </tbody></table></div><p class="small muted">Хранение журнала — не менее 3 лет. Показано ${Math.min(300, list.length)} из ${list.length}.</p>`;
+}
+function viewSettings(u) {
+  const s = db.settings, inp = (k, l, tp = 'text') => `<div class="fld"><label for="s_${k}">${l}</label><input id="s_${k}" type="${tp}" value="${esc(s[k])}" onchange="A.setSet('${k}',this.value)"></div>`;
+  const tn = { created: 'Заявка создана', approval: 'Требуется согласование', status: 'Смена статуса', comment: 'Новый комментарий', sla80: 'SLA 80%', overdue: 'Просрочка / эскалация' };
+  return `<h1>${t('settings')}</h1><div class="grid2"><div class="stack">
+    <div class="card"><h2>Производственный календарь РК</h2><p class="small muted">Выходные и праздники не входят в расчёт SLA и дней отпуска.</p>
+      <div class="row" style="margin-bottom:12px"><input type="date" id="hd" style="max-width:180px" aria-label="Дата праздника"><input id="hn" placeholder="Название" style="flex:1;min-width:140px" aria-label="Название праздника"><button class="btn sm primary" onclick="A.hAdd()">Добавить</button></div>
+      <div class="tw" style="max-height:300px"><table class="tbl"><tbody>${db.holidays.slice().sort((a, b) => a.d < b.d ? -1 : 1).map(h => `<tr><td class="num">${fDate(h.d)}</td><td>${esc(h.n)}</td><td style="text-align:right"><button class="btn sm ghost" onclick="A.hDel('${h.d}')" aria-label="Удалить">✕</button></td></tr>`).join('')}</tbody></table></div></div>
+    <div class="card"><h2>Шаблоны уведомлений</h2><p class="small muted">Переменные: <code>{номер}</code>, <code>{статус}</code>, <code>{ФИО}</code></p>${Object.keys(db.templates).map(k => `<div class="fld"><label for="tp_${k}">${tn[k]}</label><input id="tp_${k}" value="${esc(db.templates[k])}" onchange="A.tplSet('${k}',this.value)"></div>`).join('')}</div>
+    <div class="card"><h2>Новости на главной</h2><div class="fld"><input id="nt" placeholder="Заголовок" aria-label="Заголовок новости"></div><div class="fld"><textarea id="nx" rows="2" placeholder="Текст" aria-label="Текст новости"></textarea></div><button class="btn sm primary" onclick="A.newsAdd()">Опубликовать</button>
+      ${db.news.map(n => `<div class="news row between" style="margin-top:12px"><div><b>${esc(n.title)}</b><div class="small muted">${new Date(n.t).toLocaleDateString('ru-RU')}</div></div><button class="btn sm ghost" onclick="A.newsDel('${n.id}')">Удалить</button></div>`).join('')}</div>
+   </div><div class="stack">
+    <div class="card"><h2>Active Directory / LDAP</h2>${inp('ldapUrl', 'Сервер LDAP')}${inp('ldapBase', 'Base DN')}${inp('adGroupAdmin', 'Группа AD — администраторы')}${inp('adGroupIT', 'Группа AD — менеджеры ИТ')}<p class="small muted">Резервная локальная учётная запись администратора: <b>включена</b></p></div>
+    <div class="card"><h2>Почта (SMTP)</h2>${inp('smtp', 'Сервер SMTP')}${inp('smtpFrom', 'Адрес отправителя')}</div>
+    <div class="card"><h2>Telegram-бот <span class="chip">этап 2</span></h2>${inp('tgBot', 'Имя бота')}</div>
+    <div class="card"><h2>Вложения</h2><div class="row2">${inp('maxFiles', 'Файлов на заявку', 'number')}${inp('maxMb', 'Макс. размер, МБ', 'number')}</div></div>
+   </div></div>`;
+}
+function viewProfile(u) {
+  return `<h1>${t('profile')}</h1><div class="grid2">
+   <div class="card"><div class="row" style="margin-bottom:14px"><span class="ava" style="width:56px;height:56px;font-size:20px">${initials(u.fio)}</span><div><h2 style="margin:0">${esc(u.fio)}</h2><div class="muted">${esc(u.pos)}</div></div></div>
+    <dl class="dl"><dt>Логин AD</dt><dd>${esc(u.login)}</dd><dt>Табельный номер</dt><dd>${esc(u.tab)}</dd><dt>Подразделение</dt><dd>${esc(u.dept)}</dd><dt>Руководитель</dt><dd>${u.manager ? esc(user(u.manager).fio) : '—'}</dd><dt>Email</dt><dd>${esc(u.email)}</dd><dt>Телефон</dt><dd>${esc(u.phone)}</dd><dt>Роли</dt><dd>${u.roles.map(roleName).join(', ')}${u.mdept ? ' (' + deptName(u.mdept) + ')' : ''}</dd></dl>
+    <p class="small muted" style="margin-top:12px">Данные загружены из Active Directory и доступны только для просмотра.</p></div>
+   <div class="stack"><div class="card"><h3>Каналы уведомлений</h3>
+     <label class="chk"><input type="checkbox" checked disabled> Портал (всегда включено)</label>
+     <label class="chk"><input type="checkbox" ${u.ch.email ? 'checked' : ''} onchange="A.ch('email',this.checked)"> Email</label>
+     <label class="chk"><input type="checkbox" ${u.ch.tg ? 'checked' : ''} onchange="A.ch('tg',this.checked)"> Telegram <span class="chip">этап 2</span></label></div>
+    <div class="card"><h3>Интерфейс</h3><div class="row2"><div class="fld"><label for="pl">Язык / Тіл</label><select id="pl" onchange="db.ui.lang=this.value;render()"><option value="ru" ${db.ui.lang === 'ru' ? 'selected' : ''}>Русский</option><option value="kz" ${db.ui.lang === 'kz' ? 'selected' : ''}>Қазақ тілі</option></select></div>
+     <div class="fld"><label for="pt">Тема</label><select id="pt" onchange="db.ui.theme=this.value;render()"><option value="auto" ${db.ui.theme === 'auto' ? 'selected' : ''}>Как в системе</option><option value="light" ${db.ui.theme === 'light' ? 'selected' : ''}>Светлая</option><option value="dark" ${db.ui.theme === 'dark' ? 'selected' : ''}>Тёмная</option></select></div></div></div></div></div>`;
+}
+
+/* ---------- actions (моделируют серверное API с проверкой прав) ---------- */
+function act(fn) { try { fn(); save(); render(); } catch (e) { if (e === FORBID) { toast('403: нет прав на это действие', 'err'); } else { console.error(e); toast('Ошибка: ' + e.message, 'err'); } } }
+const A = {
+  login(id) { db.session = { uid: id, last: Date.now() }; ui.open = null; const u = user(id); db.audit.unshift({ id: uid(), user: id, ent: 'Session', eid: '', action: 'Вход (AD/SSO)', old: '', new: u.login, ip: '10.20.1.' + (10 + db.users.indexOf(u)), t: Date.now() }); save(); location.hash = '#/home'; render(); },
+  logout() { audit('Выход', '', '', '', 'Session'); db.session.uid = null; ui.open = null; save(); location.hash = ''; render(); },
+  reset() { if (confirm('Сбросить все демо-данные к исходному состоянию?')) { try { localStorage.removeItem(LS); } catch (e) { } ui = { open: null, my: {}, q: {}, aud: {}, vm: 0, b: null, an: 'all' }; seed(); save(); location.hash = ''; render(); } },
+  lang() { db.ui.lang = db.ui.lang === 'ru' ? 'kz' : 'ru'; render(); },
+  theme() { const o = ['auto', 'light', 'dark']; db.ui.theme = o[(o.indexOf(db.ui.theme) + 1) % 3]; render(); toast('Тема: ' + { auto: 'как в системе', light: 'светлая', dark: 'тёмная' }[db.ui.theme]); },
+  toggle(k) { ui.open = ui.open === k ? null : k; render(); },
+  readAll() { const u = me(); db.notifs.forEach(n => { if (n.user === u.id) n.read = true; }); render(); },
+  readN(id) { const n = db.notifs.find(x => x.id === id); if (n) n.read = true; ui.open = null; save(); },
+  f(scope, k, v) { ui[scope][k] = v; render(); },
+  vm(d) { ui.vm += d; render(); },
+  qview(v) { db.ui.qview = v; render(); },
+
+  saveDraft(manual) {
+    const f = document.getElementById('rf'); if (!f) return;
+    const u = me(), ty = typeById(ui.form.type), c = collect(f, ty, false);
+    let r = ui.form.draft && req(ui.form.draft);
+    if (!r) {
+      if (!manual && !c.desc && !Object.values(c.data).some(v => v && (typeof v !== 'object' || v.from)) && c.subject === ty.name) return;
+      r = { id: 'r' + db.seq, num: numFmt(db.seq++), type: ty.id, author: u.id, assignee: null, status: 'draft', priority: 'normal', subject: '', desc: '', data: {}, files: [], created: Date.now(), updated: Date.now(), deadline: 0, doneAt: null, closedAt: null, pausedAt: null, rating: null, review: '', hist: [], comments: [], approvals: [], flags: { n80: false, over: false } };
+      db.reqs.push(r); ui.form.draft = r.id; audit('Создание черновика', r.id, '', 'Черновик');
+      history.replaceState(null, '', '#/edit/' + r.id);
+    }
+    Object.assign(r, { subject: c.subject || ty.name, desc: c.desc, priority: c.priority, data: c.data, updated: Date.now() });
+    save();
+    const st = document.getElementById('draftst'); if (st) st.textContent = 'Черновик ' + r.num + ' · сохранён в ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+    if (manual) toast('Черновик сохранён', 'ok');
+  },
+  delDraft(id) { act(() => { const r = req(id); need(r && r.author === me().id && r.status === 'draft'); db.reqs = db.reqs.filter(x => x !== r); audit('Удаление черновика', id, 'Черновик', ''); toast('Черновик удалён'); location.hash = '#/my'; }); },
+  submit(e) {
+    e.preventDefault();
+    const f = e.target, u = me(), ty = typeById(ui.form.type), c = collect(f, ty, true);
+    if (Object.keys(c.errs).length) { toast('Проверьте выделенные поля', 'err'); const first = f.querySelector('.fld.bad input,.fld.bad select,.fld.bad textarea'); first && first.focus(); return false; }
+    let r = ui.form.draft && req(ui.form.draft);
+    if (!r) { r = { id: 'r' + db.seq, num: numFmt(db.seq++), type: ty.id, author: u.id, assignee: null, hist: [], comments: [], approvals: [], flags: { n80: false, over: false }, doneAt: null, closedAt: null, pausedAt: null, rating: null, review: '' }; db.reqs.push(r); }
+    const now = Date.now(), head = u.manager && user(u.manager).active ? u.manager : null;
+    const st = ty.approval && head ? 'approval' : 'new';
+    Object.assign(r, { subject: c.subject, desc: c.desc, priority: c.priority, data: c.data, files: c.files, status: st, created: now, updated: now, deadline: addWork(now, ty.sla) });
+    r.hist.push({ t: now, user: u.id, from: null, to: st, note: ty.approval && !head ? 'Руководитель в AD не найден — согласование пропущено' : '' });
+    audit('Отправка заявки', r.id, 'Черновик', I18N.ru['st_' + st]);
+    if (st === 'approval') notify([head], fillTpl('approval', r), r.id, ['portal', 'email', 'tg']);
+    else notify(managersOf(ty.cat), fillTpl('created', r), r.id);
+    db.notifs.unshift({ id: uid(), user: u.id, text: fillTpl('created', r), rid: r.id, t: now, read: false, ch: ['portal', 'email'] });
+    ui.form = null; save();
+    confetti();
+    const m = modal(`<div style="text-align:center">${mascot('happy', 120)}<h2>Заявка отправлена!</h2><p><b>${r.num}</b><br>${st === 'approval' ? 'Ушла на согласование руководителю: ' + esc(user(head).fio) : 'Попала в очередь отдела ' + deptName(ty.cat)}.<br>Срок по SLA: ${fdt(r.deadline)}</p><div class="row" style="justify-content:center"><button class="btn primary" data-ok>Открыть заявку</button><button class="btn" data-x>На главную</button></div></div>`);
+    m.querySelector('[data-ok]').onclick = () => { m.remove(); go('#/r/' + r.id); };
+    m.querySelector('[data-x]').onclick = () => { m.remove(); go('#/home'); };
+    return false;
+  },
+  approve(id, silent) {
+    const fn = () => { const u = me(), r = req(id); need(r && isHeadOf(u, r) && r.status === 'approval'); r.approvals.push({ by: u.id, step: 'Руководитель', dec: 'approved', comment: '', t: Date.now() }); audit('Согласование', r.id, '', 'Согласовано'); setStatus(r, 'new', 'Согласовано руководителем'); notify(managersOf(deptOf(r)), fillTpl('created', r), r.id); };
+    if (silent) { fn(); return; }
+    act(() => { fn(); toast('Согласовано ✓', 'ok'); });
+  },
+  bulk() { const ids = [...document.querySelectorAll('.bsel:checked')].map(x => x.value); if (!ids.length) return toast('Отметьте заявки галочками'); act(() => { ids.forEach(id => A.approve(id, true)); toast('Согласовано заявок: ' + ids.length, 'ok'); }); },
+  async reject(id) {
+    const v = await ask({ title: 'Отклонить заявку', text: 'Автор увидит причину в карточке и в уведомлении.', label: 'Причина отклонения', req: true, ok: 'Отклонить', cls: 'danger', em: 'sad' });
+    if (v == null) return;
+    act(() => { const u = me(), r = req(id); const asHead = isHeadOf(u, r) && r.status === 'approval'; need(r && (asHead || (canProcess(u, r) && ['new', 'work'].includes(r.status)))); if (asHead) r.approvals.push({ by: u.id, step: 'Руководитель', dec: 'rejected', comment: v, t: Date.now() }); setStatus(r, 'rejected', v); toast('Заявка отклонена'); });
+  },
+  take(id) { act(() => { const u = me(), r = req(id); need(r && canProcess(u, r) && r.status === 'new'); const old = r.assignee; r.assignee = u.id; audit('Назначение исполнителя', r.id, old ? user(old).fio : '', u.fio); setStatus(r, 'work'); toast('Заявка в работе', 'ok'); }); },
+  async assign(id) {
+    const u = me(), r = req(id); if (!r || !canProcess(u, r)) return toast('403: нет прав', 'err');
+    const staff = db.users.filter(x => x.active && has(x, 'manager') && x.mdept === deptOf(r));
+    const v = await ask({ title: 'Назначить исполнителя', label: 'Сотрудник отдела ' + deptName(deptOf(r)), options: staff.map(x => [x.id, x.fio + (x.id === r.assignee ? ' (текущий)' : '')]), ok: 'Назначить' });
+    if (!v) return;
+    act(() => { need(canProcess(me(), r)); const old = r.assignee; r.assignee = v; audit('Назначение исполнителя', r.id, old ? user(old).fio : '', user(v).fio); notify([v], 'Вам назначена заявка ' + r.num + ': ' + r.subject, r.id); if (r.status === 'new') setStatus(r, 'work', 'Назначен: ' + user(v).fio); else r.updated = Date.now(); toast('Исполнитель: ' + user(v).fio, 'ok'); });
+  },
+  async waiting(id) {
+    const v = await ask({ title: 'Запросить информацию у автора', text: 'Таймер SLA встанет на паузу, пока автор не ответит.', label: 'Вопрос автору', req: true, ok: 'Отправить вопрос' });
+    if (v == null) return;
+    act(() => { const u = me(), r = req(id); need(r && canProcess(u, r) && r.status === 'work'); r.comments.push({ id: uid(), user: u.id, text: v, t: Date.now(), internal: false, files: [] }); setStatus(r, 'waiting', v); });
+  },
+  resume(id) { act(() => { const u = me(), r = req(id); need(r && canProcess(u, r) && r.status === 'waiting'); setStatus(r, 'work'); }); },
+  async done(id) {
+    const v = await ask({ title: 'Заявка выполнена', text: 'Автор получит просьбу оценить работу. Результат (например, справку) можно приложить в переписке.', label: 'Комментарий для автора (необязательно)', ok: 'Выполнена', cls: 'ok', em: 'happy' });
+    if (v == null) return;
+    act(() => { const u = me(), r = req(id); need(r && canProcess(u, r) && ['work', 'waiting'].includes(r.status)); if (!r.assignee) r.assignee = u.id; if (v) r.comments.push({ id: uid(), user: u.id, text: v, t: Date.now(), internal: false, files: [] }); setStatus(r, 'done', v); toast('Отлично! Заявка выполнена', 'ok'); });
+  },
+  async cancel(id) {
+    const v = await ask({ title: 'Отменить заявку?', text: 'Отменить можно, пока заявку не взяли в работу.', label: 'Причина (необязательно)', ok: 'Отменить заявку', cls: 'danger', em: 'sad' });
+    if (v == null) return;
+    act(() => { const u = me(), r = req(id); need(r && r.author === u.id && ['new', 'approval'].includes(r.status) && !r.assignee); setStatus(r, 'cancelled', v); notify(r.status === 'approval' ? [u.manager] : managersOf(deptOf(r)), 'Заявка ' + r.num + ' отменена автором', r.id); toast('Заявка отменена'); });
+  },
+  async reopen(id) {
+    const v = await ask({ title: 'Вернуть заявку в работу', text: 'Что осталось не так?', label: 'Комментарий', req: true, ok: 'Вернуть в работу', em: 'sad' });
+    if (v == null) return;
+    act(() => { const u = me(), r = req(id); need(r && r.author === u.id && r.status === 'done' && Date.now() - r.doneAt <= 3 * D); r.comments.push({ id: uid(), user: u.id, text: v, t: Date.now(), internal: false, files: [] }); setStatus(r, 'work', v); notify([r.assignee], 'Автор вернул заявку ' + r.num + ' в работу', r.id); });
+  },
+  rate(e, id) {
+    e.preventDefault(); const fd = new FormData(e.target), n = +fd.get('rate');
+    if (!n) { toast('Выберите оценку от 1 до 5 звёзд', 'err'); return false; }
+    act(() => { const u = me(), r = req(id); need(r && r.author === u.id && r.status === 'done'); r.rating = n; r.review = String(fd.get('review') || '').trim(); audit('Оценка', r.id, '', n + '★'); setStatus(r, 'closed', 'Оценка: ' + n + '★'); notify([r.assignee], 'Заявка ' + r.num + ' оценена на ' + n + '★', r.id); if (n >= 4) confetti(); toast('Спасибо за оценку!', 'ok'); });
+    return false;
+  },
+  comment(e, id) {
+    e.preventDefault();
+    const fd = new FormData(e.target), text = String(fd.get('text') || '').trim(), files = [...e.target.elements.files.files].map(x => ({ name: x.name, size: x.size }));
+    if (!text && !files.length) { toast('Напишите сообщение', 'err'); return false; }
+    if (files.some(x => x.size > db.settings.maxMb * 1048576 || !/\.(pdf|docx|xlsx|jpe?g|png)$/i.test(x.name))) { toast('Допустимы PDF, DOCX, XLSX, JPG, PNG до ' + db.settings.maxMb + ' МБ', 'err'); return false; }
+    act(() => {
+      const u = me(), r = req(id); need(r && (r.author === u.id || canProcess(u, r) || isHeadOf(u, r)));
+      const internal = !!fd.get('internal') && canProcess(u, r);
+      r.comments.push({ id: uid(), user: u.id, text, t: Date.now(), internal, files }); r.updated = Date.now();
+      audit(internal ? 'Внутренний комментарий' : 'Комментарий', r.id, '', text.slice(0, 60));
+      const others = r.author === u.id ? (r.assignee ? [r.assignee] : r.status === 'approval' ? [user(r.author).manager] : managersOf(deptOf(r))) : [r.author];
+      if (!internal) notify(others, fillTpl('comment', r), r.id); else notify(managersOf(deptOf(r)), 'Внутренний комментарий в ' + r.num, r.id, ['portal']);
+      if (r.author === u.id && r.status === 'waiting') setStatus(r, 'work', 'Автор ответил');
+    });
+    post.push(() => { const c = document.getElementById('chat'); if (c) c.scrollTop = c.scrollHeight; });
+    return false;
+  },
+  move(id, s) {
+    const r = req(id); if (!r || r.status === s) return;
+    const ok = { 'new>work': 1, 'work>waiting': 1, 'waiting>work': 1, 'work>done': 1, 'waiting>done': 1 }[r.status + '>' + s];
+    if (!ok) return toast(`Нельзя перевести из «${t('st_' + r.status)}» в «${t('st_' + s)}»`, 'err');
+    if (s === 'waiting') return A.waiting(id);
+    if (s === 'done') return A.done(id);
+    if (r.status === 'new') return A.take(id);
+    A.resume(id);
+  },
+  role(id, role, on) { act(() => { const u = me(); need(has(u, 'admin')); if (id === u.id && role === 'admin' && !on) { toast('Нельзя снять роль администратора с себя', 'err'); return; } const x = user(id), old = x.roles.join(', '); x.roles = on ? uniq([...x.roles, role]) : x.roles.filter(r => r !== role); if (role === 'manager' && on && !x.mdept) x.mdept = 'HR'; audit('Изменение ролей', x.login, old, x.roles.join(', '), 'User'); toast('Роли обновлены', 'ok'); }); },
+  mdept(id, v) { act(() => { need(has(me(), 'admin')); const x = user(id), old = x.mdept; x.mdept = v; audit('Отдел-исполнитель', x.login, old, v, 'User'); }); },
+  active(id) { act(() => { need(has(me(), 'admin')); const x = user(id); x.active = !x.active; audit(x.active ? 'Разблокировка' : 'Блокировка', x.login, '', '', 'User'); toast(x.active ? 'Пользователь разблокирован' : 'Пользователь заблокирован'); }); },
+  typeSet(id, k, v) { act(() => { need(has(me(), 'admin')); const x = typeById(id), old = x[k]; if (k === 'sla' && !(v >= 1)) return toast('SLA должен быть ≥ 1 ч', 'err'); x[k] = v; audit('Изменение типа заявки', x.name, k + ': ' + old, k + ': ' + v, 'RequestType'); toast('Сохранено', 'ok'); }); },
+  saveType() {
+    const b = ui.b;
+    if (!b.name.trim()) return toast('Укажите название типа заявки', 'err');
+    if (b.fields.some(f => !f.l.trim())) return toast('У каждого поля должна быть подпись', 'err');
+    if (b.fields.some(f => f.t === 'select' && !f.opt.split(',').map(s => s.trim()).filter(Boolean).length)) return toast('Укажите варианты для полей-списков', 'err');
+    act(() => {
+      need(has(me(), 'admin'));
+      const ty = { id: 'c' + uid(), cat: b.cat, name: b.name.trim(), approval: b.approval, descReq: b.descReq, sla: Math.max(1, b.sla || 8), active: true, fields: b.fields.map((f, i) => ({ k: 'c' + i, l: f.l.trim(), t: f.t, req: f.req ? 1 : 0, ...(f.t === 'select' ? { opt: f.opt.split(',').map(s => s.trim()).filter(Boolean) } : {}), ...(f.t === 'dict' ? { dict: f.opt || Object.keys(db.dicts)[0] } : {}) })) };
+      db.types.push(ty); audit('Создание типа заявки', ty.name, '', catById(ty.cat).ru, 'RequestType'); ui.b = null;
+      toast('Тип «' + ty.name + '» добавлен в каталог', 'ok'); confetti();
+    });
+  },
+  dictSave(k) { act(() => { need(has(me(), 'admin')); const v = document.getElementById('d_' + k).value.split('\n').map(s => s.trim()).filter(Boolean); audit('Изменение справочника', k, db.dicts[k].length + ' поз.', v.length + ' поз.', 'Dictionary'); db.dicts[k] = v; toast('Справочник сохранён', 'ok'); }); },
+  hAdd() { const d = document.getElementById('hd').value, n = document.getElementById('hn').value.trim(); if (!d || !n) return toast('Укажите дату и название', 'err'); act(() => { need(has(me(), 'admin')); if (db.holidays.some(h => h.d === d)) return toast('Эта дата уже есть', 'err'); db.holidays.push({ d, n }); audit('Добавлен праздник', d, '', n, 'Holiday'); }); },
+  hDel(d) { act(() => { need(has(me(), 'admin')); const h = db.holidays.find(x => x.d === d); db.holidays = db.holidays.filter(x => x.d !== d); audit('Удалён праздник', d, h?.n, '', 'Holiday'); }); },
+  tplSet(k, v) { act(() => { need(has(me(), 'admin')); audit('Шаблон уведомления', k, db.templates[k], v, 'Template'); db.templates[k] = v; toast('Шаблон сохранён', 'ok'); }); },
+  setSet(k, v) { act(() => { need(has(me(), 'admin')); if (['maxFiles', 'maxMb'].includes(k)) v = Math.max(1, +v || 1); audit('Настройка', k, db.settings[k], v, 'Settings'); db.settings[k] = v; toast('Сохранено', 'ok'); }); },
+  newsAdd() { const ti = document.getElementById('nt').value.trim(), tx = document.getElementById('nx').value.trim(); if (!ti) return toast('Укажите заголовок', 'err'); act(() => { need(has(me(), 'admin')); db.news.unshift({ id: uid(), t: Date.now(), title: ti, text: tx }); audit('Публикация новости', '', '', ti, 'News'); toast('Новость опубликована', 'ok'); }); },
+  newsDel(id) { act(() => { need(has(me(), 'admin')); const n = db.news.find(x => x.id === id); db.news = db.news.filter(x => x.id !== id); audit('Удаление новости', '', n?.title, '', 'News'); }); },
+  ch(k, v) { act(() => { const u = me(); u.ch[k] = v; audit('Настройки уведомлений', u.login, '', k + ': ' + (v ? 'вкл' : 'выкл'), 'User'); toast('Сохранено', 'ok'); }); },
+  exportAn() {
+    need(has(me(), 'admin'));
+    const a = analyticsData(), rows = [['Номер', 'Категория', 'Тип', 'Тема', 'Автор', 'Подразделение', 'Приоритет', 'Статус', 'Исполнитель', 'Создана', 'Срок SLA', 'Выполнена', 'В срок', 'Оценка', 'Отзыв']];
+    a.list.forEach(r => rows.push([r.num, catById(deptOf(r))?.ru, typeOf(r)?.name, r.subject, user(r.author).fio, user(r.author).dept, I18N.ru['p_' + r.priority], I18N.ru['st_' + r.status], r.assignee ? user(r.assignee).fio : '', fdt(r.created), fdt(r.deadline), r.doneAt ? fdt(r.doneAt) : '', r.doneAt ? (r.doneAt <= r.deadline ? 'да' : 'нет') : '', r.rating || '', r.review]));
+    rows.push([], ['Итого заявок', a.list.length], ['% в срок', a.fin.length ? Math.round(a.onTime / a.fin.length * 100) + '%' : '—'], ['Среднее время, раб. ч', a.avgH.toFixed(1)], ['CSAT', a.csat ? a.csat.toFixed(2) : '—']);
+    download('anpz-servis-otchet-' + iso(new Date()) + '.csv', rows); audit('Экспорт отчёта', '', '', a.list.length + ' строк', 'Report'); save(); toast('Отчёт выгружен (CSV, открывается в Excel)', 'ok');
+  },
+  exportAudit() {
+    need(has(me(), 'admin'));
+    const rows = [['Дата', 'Пользователь', 'Объект', 'ID', 'Действие', 'Было', 'Стало', 'IP']];
+    db.audit.forEach(x => rows.push([fdt(x.t), user(x.user).fio, x.ent, req(x.eid)?.num || x.eid, x.action, x.old, x.new, x.ip]));
+    download('anpz-servis-audit-' + iso(new Date()) + '.csv', rows); toast('Журнал выгружен', 'ok');
+  },
+};
+window.A = A; window.ui = ui;
+
+/* ---------- boot ---------- */
+db = load();
+if (!db || db.ver !== 1) { seed(); save(); }
+window.addEventListener('hashchange', () => { ui.open = null; render(); window.scrollTo(0, 0); });
+document.addEventListener('click', e => { if (ui.open && !e.target.closest('.pop')) { ui.open = null; render(); } });
+window.addEventListener('storage', e => { if (e.key === LS) { db = load() || db; render(); } });
+render();
+</script>
+</body>
+</html>
